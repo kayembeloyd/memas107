@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import CToolbar from '../components/CToolbar';
@@ -6,7 +6,27 @@ import CToolbar from '../components/CToolbar';
 import { Ionicons } from '@expo/vector-icons';
 import CTextInput from '../components/CTextInput';
 
+import { BarCodeScanner } from 'expo-barcode-scanner';
+
 export default function ScanScreen({ navigation }){
+
+    const [hasPermission, setHasPermission] = useState(null);
+    const [scanned, setScanned] = useState(false);
+
+    useEffect(() => {
+        const getBarCodeScannerPermissions = async () => {
+          const { status } = await BarCodeScanner.requestPermissionsAsync();
+          setHasPermission(status === 'granted');
+        };
+    
+        getBarCodeScannerPermissions();
+      }, []);
+    
+      const handleBarCodeScanned = ({ type, data }) => {
+        setScanned(true);
+        alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+      };
+
     return (
         <View style={styles.container}>
             <View style={ styles.searchBarContainer }>
@@ -15,8 +35,17 @@ export default function ScanScreen({ navigation }){
             </View>
 
             <View style={{ flex:1, margin: 10,}}>
-                <View style={{alignSelf:'center', flex:1,  backgroundColor: 'black', width: '100%', maxWidth: 700, borderRadius: 10,}}>
-
+                <View style={{alignSelf:'center', flex:1,  backgroundColor: 'grey', width: '100%', maxWidth: 700, borderRadius: 10,}}>
+                    {
+                        hasPermission ? 
+                        (
+                            <BarCodeScanner
+                                onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                                style={[StyleSheet.absoluteFillObject, { margin: 5}]}/>
+                        ) : (
+                            <Text style={{ color: 'white'}}>No access to camera</Text>
+                        )
+                    }
                 </View>
             </View>
 
