@@ -5,6 +5,7 @@ import CSearchBar from '../components/CSearchBar';
 import CFilterBar from '../components/CFilterBar';
 import CFilterItem from '../components/CFilterItem';
 import CEquipmentItem from '../components/CEquipmentItem'
+import CScanButton from '../components/CScanButton';
 
 export default function EquipmentsScreen({ navigation }){
 
@@ -41,10 +42,7 @@ export default function EquipmentsScreen({ navigation }){
                 )}
             />
 
-            <View style={ styles.scanButtonContainer }>
-                <Image source={require('../assets/sample-qr-code.png')}
-                    style={[styles.profileImage, {borderColor:'black',borderWidth: 5, width: 60, height: 60}]} />
-            </View>
+            <CScanButton />
 
         </View>
     )
@@ -68,24 +66,6 @@ const styles = StyleSheet.create({
 
     filterBarContainer: {
         marginTop: 10,
-    },
-
-    profileImage: {
-        width: 66, 
-        height: 66,
-        borderRadius: 400/ 2
-    },
-
-    scanButtonContainer:{
-        position: 'absolute',
-        end: 0,
-        right: 0,
-        bottom: 0,
-        alignItems:'flex-end',
-        backgroundColor: 'indigo',
-        marginRight: 30,
-        marginEnd: 30,
-        marginBottom: 30,
     },
     
 })

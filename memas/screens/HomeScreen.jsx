@@ -4,6 +4,7 @@ import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import CCard from '../components/CCard';
 import CButton from '../components/CButton';
+import CScanButton from '../components/CScanButton';
 
 export default function HomeScreen({ navigation }){
     return (
@@ -51,10 +52,7 @@ export default function HomeScreen({ navigation }){
                 <View style={{ height: 90, backgroundColor:'red' }}></View>
             </ScrollView>
 
-            <View style={ styles.scanButtonContainer }>
-                <Image source={require('../assets/sample-qr-code.png')}
-                    style={[styles.profileImage, {borderColor:'black',borderWidth: 5, width: 60, height: 60}]} />
-            </View>
+            <CScanButton />
         </View>
     )
 }
@@ -132,18 +130,6 @@ const styles = StyleSheet.create({
         marginBottom: 10, 
         width: '100%', 
         maxWidth: 700
-    },
-
-    scanButtonContainer:{
-        position: 'absolute',
-        end: 0,
-        right: 0,
-        bottom: 0,
-        alignItems:'flex-end',
-        backgroundColor: 'indigo',
-        marginRight: 30,
-        marginEnd: 30,
-        marginBottom: 30,
     },
     
 })
