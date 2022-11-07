@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default function CTextInput(props) {
     return (
         <View style={[{backgroundColor:'indigo', flexDirection: 'row'}, {...props.style}]}>
-            <View style= {{ flex: 1}}>
+            <View style= {{ margin: 10, flex: 1}}>
                 <Text style={{ margin: 5, paddingLeft: 10, }}>{props.hint}</Text>
 
                 <View style={{ flexDirection: 'row'}}>

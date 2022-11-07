@@ -14,13 +14,13 @@ export default function ScanScreen({ navigation }){
                     onBackPress={() => navigation.goBack()}/>
             </View>
 
-            <View style={{ flex:1, }}>
-                <View style={{flex:1,  backgroundColor: 'black', margin: 10, borderRadius: 10,}}>
+            <View style={{ flex:1, margin: 10,}}>
+                <View style={{alignSelf:'center', flex:1,  backgroundColor: 'black', width: '100%', maxWidth: 700, borderRadius: 10,}}>
 
                 </View>
             </View>
 
-            <CTextInput style={{ margin: 10}} hint='Enter code manually' goButtonVisible={true}/>
+            <CTextInput style={{ alignSelf:'center', width: '100%', maxWidth: 700}} hint='Enter code manually' goButtonVisible={true}/>
         </View>
     )
 }
@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'green',
         marginTop: 36,
+        justifyContent: 'center',
     }, 
 
     searchBarContainer: {
