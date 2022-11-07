@@ -12,6 +12,8 @@ import CListModal from '../components/CListModal';
 export default function EquipmentsScreen({ navigation }){
 
     const [equipments, setEquipments] = useState([{id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11}])
+    
+    // For the FilterBar
     const [departments, setDepartments] = useState([
         {id: 0, name:'All'}, 
         {id: 1, name:'Department 1'}, 
@@ -34,14 +36,40 @@ export default function EquipmentsScreen({ navigation }){
     ])
     const [selectedDepartment, setSelectedDepartment] = useState('All')
 
+    const [makes, setMakes] = useState([
+        {id: 0, name:'All'},
+        {id: 1, name:'Make 1'},
+        {id: 2, name:'Make 2'},
+        {id: 3, name:'Make 3'},
+        {id: 4, name:'Make 4'},
+        {id: 5, name:'Make 5'},
+        {id: 6, name:'Make 6'},
+    ])
+    const [selectedMake, setSelectedMake] = useState('All')
+
+    const [statuses, setStatuses] = useState([
+        {id: 0, name:'All'},
+        {id: 1, name:'Status 1'},
+        {id: 2, name:'Status 2'},
+        {id: 3, name:'Status 3'},
+    ])
+    const [selectedStatus, setSelectedStatus] = useState('All')
+
     const [selectDepartmentModalVisibility, setSelectDepartmentModalVisibility] = useState(false)
+    const [selectMakeModalVisibility, setSelectMakeModalVisibility] = useState(false)
+    const [selectStatusModalVisibility, setSelectStatusModalVisibility] = useState(false)
 
     const filterItemPressHandler = (filterItem) => {
         switch (filterItem) {
             case 'Department':
                 setSelectDepartmentModalVisibility(true)
                 break;
-        
+            case 'Make':
+                setSelectMakeModalVisibility(true)
+                break;
+            case 'Status':
+                setSelectStatusModalVisibility(true)
+                break
             default:
                 break;
         }
@@ -54,9 +82,27 @@ export default function EquipmentsScreen({ navigation }){
                 onCancelPress={()=>{
                     setSelectDepartmentModalVisibility(false)
                 }}
-                onItemPress={(selectedDepartment)=>{
-                    setSelectedDepartment(selectedDepartment)
+                onItemPress={(selectedItem)=>{
+                    setSelectedDepartment(selectedItem)
                     setSelectDepartmentModalVisibility(false)
+                }}/>
+
+            <CListModal visible={selectMakeModalVisibility} title='Select make' list={makes} 
+                onCancelPress={()=>{
+                    setSelectMakeModalVisibility(false)
+                }}
+                onItemPress={(selectedItem)=>{
+                    setSelectedMake(selectedItem)
+                    setSelectMakeModalVisibility(false)
+                }}/>
+
+            <CListModal visible={selectStatusModalVisibility} title='Select status' list={statuses} 
+                onCancelPress={()=>{
+                    setSelectStatusModalVisibility(false)
+                }}
+                onItemPress={(selectedItem)=>{
+                    setSelectedStatus(selectedItem)
+                    setSelectStatusModalVisibility(false)
                 }}/>
 
             <FlatList ListHeaderComponent = {() => {
@@ -72,10 +118,10 @@ export default function EquipmentsScreen({ navigation }){
                                     <CFilterItem style={{ marginRight: 20}} filterKey='Department' filterValue={selectedDepartment} 
                                         filterItemPress={(fkey) => filterItemPressHandler(fkey)} />
                                     
-                                    <CFilterItem style={{ marginRight: 20}} filterKey='Make' filterValue='all' 
+                                    <CFilterItem style={{ marginRight: 20}} filterKey='Make' filterValue={selectedMake} 
                                         filterItemPress={(fkey) => filterItemPressHandler(fkey)}/>
                                     
-                                    <CFilterItem style={{ marginRight: 20}} filterKey='Status' filterValue='all' 
+                                    <CFilterItem style={{ marginRight: 20}} filterKey='Status' filterValue={selectedStatus} 
                                         filterItemPress={(fkey) => filterItemPressHandler(fkey)}/>
                                 </CFilterBar>
                             </View>
