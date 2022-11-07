@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import CCard from '../components/CCard';
 import CButton from '../components/CButton';
 
-export default function HomeScreen(){
+export default function HomeScreen({ navigation }){
     return (
         <View style={styles.container}>
             <View style={styles.containerHomeHeader}>
@@ -17,10 +17,7 @@ export default function HomeScreen(){
 
             <ScrollView>            
                 <View style={styles.containerProfile}>
-                    <Image 
-                        source={require('../assets/profile.jpeg')}
-                        style={styles.profileImage} />
-                
+                    <Image source={require('../assets/profile.jpeg')} style={styles.profileImage} />
                     <View style={styles.profileInfo}>
                         <Text style={styles.profileInfoName}>Lloyd Kayembe</Text>
                         <Text style={styles.profileInfoPosition}>Biomedical Engineer</Text>
@@ -29,11 +26,19 @@ export default function HomeScreen(){
 
                 <View style={styles.cardsContainer}>
                     <CCard style={ styles.cardAdditionalStyle } titleShown={false}>
-                        <CButton text="Equipments" onPress={() => { console.log('Equipments button pressed') }}/>
+                        <CButton text="Equipments" onPress={() => { 
+                            console.log('Equipments button pressed')
+                            console.log('Opening the Equipments screen')
+                            
+                            navigation.navigate('Equipments')
+                        }}/>
+ 
                         <CButton style={{ marginTop:10 }} text="Add Equipment" 
                             onPress={() => { console.log('Add Equipment button pressed') }}/>
+ 
                         <CButton style={{ marginTop:10 }} text="Maintenance Logs" 
                             onPress={() => { console.log('Maintenance Logs button pressed') }}/>
+ 
                         <CButton style={{ marginTop:10 }} text="Maintenance Schedule" 
                             onPress={() => { console.log('Maintenance Schedule pressed') }}/>
                     </CCard>
@@ -42,11 +47,12 @@ export default function HomeScreen(){
                     TIP: dont forget to add width:'100%', maxWidth: 700 attributes */}
                 </View>
 
+                {/* This is a dummy View to create space for the scan button */}
+                <View style={{ height: 90, backgroundColor:'red' }}></View>
             </ScrollView>
 
             <View style={ styles.scanButtonContainer }>
-                <Image 
-                    source={require('../assets/sample-qr-code.png')}
+                <Image source={require('../assets/sample-qr-code.png')}
                     style={[styles.profileImage, {borderColor:'black',borderWidth: 5, width: 60, height: 60}]} />
             </View>
         </View>
@@ -56,7 +62,7 @@ export default function HomeScreen(){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'blue'
+        backgroundColor: 'blue',
     },
 
     containerHomeHeader: {
