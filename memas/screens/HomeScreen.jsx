@@ -52,7 +52,9 @@ export default function HomeScreen({ navigation }){
                 <View style={{ height: 90, backgroundColor:'red' }}></View>
             </ScrollView>
 
-            <CScanButton />
+            <CScanButton onPress={() => {
+                navigation.navigate('Scan')
+            }}/>
         </View>
     )
 }

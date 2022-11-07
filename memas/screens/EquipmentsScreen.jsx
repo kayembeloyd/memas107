@@ -139,7 +139,9 @@ export default function EquipmentsScreen({ navigation }){
                 )}
             />
 
-            <CScanButton />
+            <CScanButton onPress={() => {
+                navigation.navigate('Scan')
+            }}/>
 
         </View>
     )

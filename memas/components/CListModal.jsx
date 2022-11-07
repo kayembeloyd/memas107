@@ -9,7 +9,9 @@ export default function CListModal(props) {
             <View style={{backgroundColor: 'rgba(0,0,0,0.4)', 
                 flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20,}}>
 
-                <View style={{ flex: 1, width: '100%', backgroundColor: 'white', borderRadius: 10, marginVertical: 60 }}>
+                <View style={{ flex: 1, width: '100%', backgroundColor: 'white', borderRadius: 10, 
+                    marginVertical: 60, maxWidth: 800 }}>
+                    
                     <FlatList 
                         data={props.list}
                         keyExtractor={(item) => item.id}

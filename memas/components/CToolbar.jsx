@@ -1,9 +1,9 @@
 import React from "react";
-import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TextInput, View, TouchableOpacity } from "react-native";
 
 import { Ionicons } from '@expo/vector-icons';
 
-export default function CSearchBar(props) {
+export default function CToolbar(props) {
     return (
         <View style={[styles.container, {...props.style}]}>
             <TouchableOpacity onPress={props.onBackPress}>
@@ -11,9 +11,11 @@ export default function CSearchBar(props) {
                     name="arrow-back" size={28} color="black"/>
             </TouchableOpacity>
             
-            <TextInput style={ styles.input } placeholder={props.searchbar_hint}>
-                
-            </TextInput>
+            <View style={ styles.titleContainer }>
+                <Text style={{ fontSize: 18, fontWeight: '400', fontFamily: 'Roboto', }}>
+                    {props.text} 
+                </Text>
+            </View>
         </View>
     );
 }
@@ -21,20 +23,17 @@ export default function CSearchBar(props) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor:'green',
-        borderRadius: 10,
         flexDirection: 'row',
         paddingHorizontal: 10,
         height: 48,
         alignItems:'center'
     },
 
-    input:{
+    titleContainer:{
         backgroundColor: 'red',
         flex: 1,
         height: '100%',
-        borderWidth: 0,
+        justifyContent: 'center',
         paddingHorizontal: 20,
-        outlineWidth:0,
-        fontSize: 18, fontWeight: '400', fontFamily: 'Roboto', 
     },
 })

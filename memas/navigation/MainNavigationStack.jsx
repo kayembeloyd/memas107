@@ -87,6 +87,7 @@ export default function MainNavigationStack({ navigation }) {
                 component={ ScanScreen }
                 options={ ({ navigation }) => {
                     return {
+                        headerShown: false,
                         headerShadowVisible: false,
                     }
                 }}/>
