@@ -62,6 +62,7 @@ export default function MainNavigationStack({ navigation }) {
                 component={ MaintenanceLogEntryScreen }
                 options={ ({ navigation }) => {
                     return {
+                        headerShown: false,
                         headerShadowVisible: false,
                     }
                 }}/>
@@ -71,6 +72,7 @@ export default function MainNavigationStack({ navigation }) {
                 component={ MaintenanceLogScreen }
                 options={ ({ navigation }) => {
                     return {
+                        headerShown: false,
                         headerShadowVisible: false,
                     }
                 }}/>
@@ -83,7 +85,8 @@ export default function MainNavigationStack({ navigation }) {
                         headerShown: false,
                         headerShadowVisible: false,
                     }
-                }}/>
+                }}
+                initialParams={{ filtering: 'off', filteringEquipment: null }}/>
             
             <stack_navigator.Screen 
                 name='Scan'

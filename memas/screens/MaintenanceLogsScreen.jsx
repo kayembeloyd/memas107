@@ -9,7 +9,9 @@ import CScanButton from '../components/CScanButton';
 import CListModal from '../components/CListModal';
 import CMaintenanceLogItem from '../components/CMaintenanceLogItem';
 
-export default function MaintenanceLogs({ navigation }){
+export default function MaintenanceLogs({ route, navigation }){
+
+    const { filtering, filterEquipment } = route.params;
 
     const [maintenanceLogs, setMaintenanceLogs] = useState([
         {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11}])
@@ -85,14 +87,18 @@ export default function MaintenanceLogs({ navigation }){
                     return (
                         <View style={{ backgroundColor: 'black'}}>
                             <View style={ styles.searchBarContainer }>
-                                <CSearchBar style={{ width: '100%', maxWidth: 700 }} searchbar_hint="search equip. maintenance logs"
+                                <CSearchBar 
+                                    style={{ width: '100%', maxWidth: 700 }} 
+                                    searchbar_hint={'Filtering(' + filtering + ')' + (filterEquipment ? '(Equipment ' + filterEquipment.id + ')' : '')}
                                     onBackPress={() => navigation.goBack()}/>
                             </View>
                             
                             <View style={ styles.filterBarContainer }>
                                 <CFilterBar style={{alignItems: 'flex-start',}}>
-                                    <CFilterItem style={{ marginRight: 20}} filterKey='Department' filterValue={selectedDepartment} 
+                                    { filterEquipment ? <></> : (
+                                        <CFilterItem style={{ marginRight: 20}} filterKey='Department' filterValue={selectedDepartment} 
                                         filterItemPress={(fkey) => filterItemPressHandler(fkey)} />
+                                    )}
                                     
                                     <CFilterItem style={{ marginRight: 20}} filterKey='MaintenanceType' filterValue={selectedMaintenanceType} 
                                         filterItemPress={(fkey) => filterItemPressHandler(fkey)}/>

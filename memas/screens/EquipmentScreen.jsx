@@ -117,9 +117,18 @@ export default function EquipmentScreen({ route, navigation }){
                 </CCard>
 
                 <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={false}>
-                    <CButton style={ styles.buttonsAdditionalStyles} text='Maintenance Logs'/>
-                    <CButton style={ styles.buttonsAdditionalStyles} backgroundColor='green' text='Corrective Maintenance'/>
-                    <CButton style={ styles.buttonsAdditionalStyles} backgroundColor='green' text='Preventive Maitenance'/>
+                    <CButton style={ styles.buttonsAdditionalStyles} text='Maintenance Logs' onPress={() => {
+                        navigation.navigate('MaintenanceLogs', { filtering: 'on', filterEquipment: item })
+                    }}/>
+
+                    <CButton style={ styles.buttonsAdditionalStyles} backgroundColor='green' text='Corrective Maintenance'
+                        onPress={() => {
+                            navigation.navigate('MaintenanceLogEntry', {item: item, maintenanceType: 'Corrective Maintenance'})
+                        }}/>
+                    <CButton style={ styles.buttonsAdditionalStyles} backgroundColor='green' text='Preventive Maitenance'
+                        onPress={() => {
+                            navigation.navigate('MaintenanceLogEntry', {item: item, maintenanceType: 'Preventive Maintenance'})
+                        }}/>
                     
                     <CButton style={ styles.buttonsAdditionalStyles} text='Set Next Service date'onPress={() => {
                         setSelectNextServiceModalVisibility(true)
