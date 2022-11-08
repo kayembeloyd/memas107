@@ -37,7 +37,9 @@ export default function HomeScreen({ navigation }){
                             }}/>
  
                         <CButton style={{ marginTop:10 }} text="Maintenance Logs" 
-                            onPress={() => { console.log('Maintenance Logs button pressed') }}/>
+                            onPress={() => { 
+                                navigation.navigate('MaintenanceLogs') 
+                            }}/>
  
                         <CButton style={{ marginTop:10 }} text="Maintenance Schedule" 
                             onPress={() => { console.log('Maintenance Schedule pressed') }}/>
