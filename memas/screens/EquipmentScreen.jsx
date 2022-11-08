@@ -21,7 +21,7 @@ export default function EquipmentScreen({ route, navigation }){
     const [equipmentStatus, setEquipmentStatus] = useState('Working')
 
     const [statusModalVisibility, setStatusModalVisibility] = useState(false)
-    const [selectNextServiceModalVisibility, setSelectNextServiceModalVisibility] = useState(true)
+    const [selectNextServiceModalVisibility, setSelectNextServiceModalVisibility] = useState(false)
 
     return (
         <View style={styles.container}>
