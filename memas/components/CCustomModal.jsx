@@ -1,7 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Modal, FlatList } from "react-native";
-
-import CButton from './CButton';
+import { StyleSheet, View, Modal, ScrollView } from "react-native";
 
 export default function CCustomModal(props) {
     return (
@@ -10,9 +8,10 @@ export default function CCustomModal(props) {
                 flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20,}}>
 
                 <View style={{ width: '100%', backgroundColor: 'white', borderRadius: 10, 
-                    marginVertical: 60, maxWidth: 800 }}>
-                    
-                    {props.children}
+                    marginVertical: 60, maxWidth: 800,}}>
+                    <ScrollView>
+                        {props.children}
+                    </ScrollView>
 
                     {props.actionButtonsComponent()}
                 </View>

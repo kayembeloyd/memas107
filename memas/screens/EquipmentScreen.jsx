@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { DateSelectionCalendar, DefaultTheme } from 'react-native-easy-calendar'
+
 import CToolbar from '../components/CToolbar';
 import CCard from '../components/CCard';
 import CButton from '../components/CButton';
@@ -10,6 +12,8 @@ import CCustomModal from '../components/CCustomModal';
 export default function EquipmentScreen({ route, navigation }){
 
     const {item} = route.params;
+
+    const [selectedNextServiceDate, setSelectedNextServiceDate] = React.useState('2020-02-01');
 
     const [statuses, setStatuses] = useState([
         {id: 1, name:'Status 1'},
@@ -67,14 +71,15 @@ export default function EquipmentScreen({ route, navigation }){
                                 }}/>
                         </View>
                     )}}>
+                    <Text style={{ marginLeft: 10, marginTop: 10, marginBottom: 10, fontWeight: '500'}}>Select Next Service Date</Text>
+                    <DateSelectionCalendar
+                        allowYearView={true}
+                        showExtraDates={true}
+                        onSelectDate={setSelectedNextServiceDate}
+                        selectedDate={selectedNextServiceDate} /> 
 
-                    <Text>Here goes the Calendar</Text>
-
-
-
-
-                    
             </CCustomModal>
+
             <ScrollView stickyHeaderIndices={[0]} >
                 <View style={ styles.searchBarContainer }>
                     <CToolbar style={{ width: '100%', maxWidth: 700 }} text={ 'Equipment ' + item.id }
