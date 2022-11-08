@@ -12,7 +12,7 @@ export default function CTextInput(props) {
                 <View style={{ flexDirection: 'row'}}>
                     {props.isFrozen ? (
                         <TouchableOpacity style={{ flex: 1 }} onPress={props.onFrozenPress}>
-                            <View style={{ flex: 1, paddingHorizontal: 20, backgroundColor:'cyan', 
+                            <View style={{ flex: 1, paddingHorizontal: 20, paddingVertical: 15, backgroundColor:'cyan', 
                                 height: 53, borderRadius: 10, justifyContent: 'center'}}>
                                     <Text style={{fontSize: 18, fontWeight: '400', fontFamily: 'Roboto',}}>{props.ivalue}</Text>
                             </View>
