@@ -135,7 +135,9 @@ export default function EquipmentsScreen({ navigation }){
                 renderItem={({ item }) => (
                     <CEquipmentItem name={item.name} department='department' 
                         model='model' make='make' tag='asset-tag' status='To be determined'
-                        onPress={() => {}} />
+                        onPress={() => {
+                            navigation.navigate('Equipment', { item })
+                        }} />
                 )}
             />
 

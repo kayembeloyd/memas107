@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import CToolbar from '../components/CToolbar';
-
-import { Ionicons } from '@expo/vector-icons';
 import CTextInput from '../components/CTextInput';
 
 import { BarCodeScanner } from 'expo-barcode-scanner';
@@ -12,6 +10,9 @@ export default function ScanScreen({ navigation }){
 
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
+
+    // Temp
+    const item = {id : 0}
 
     useEffect(() => {
         const getBarCodeScannerPermissions = async () => {
@@ -24,7 +25,8 @@ export default function ScanScreen({ navigation }){
     
       const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
-        alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+        // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+        navigation.navigate('Equipment', { item })
       };
 
     return (

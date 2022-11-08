@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 export default function CButton(props) {
     return (
         <TouchableOpacity style={ props.style } onPress={ props.onPress }>
-            <View style={ styles.container }>
+            <View style={ [styles.container, { backgroundColor: props.backgroundColor === undefined ? '#E3E3E3' : props.backgroundColor }] }>
                 <Text style={ styles.text }>
                     { props.text }
                 </Text>
