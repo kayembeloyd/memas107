@@ -32,6 +32,7 @@ export default function MainNavigationStack({ navigation }) {
                 component={ EquipmentEntryScreen }
                 options={ ({ navigation }) => {
                     return {
+                        headerShown: false,
                         headerShadowVisible: false,
                     }
                 }}/>

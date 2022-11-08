@@ -28,14 +28,13 @@ export default function HomeScreen({ navigation }){
                 <View style={styles.cardsContainer}>
                     <CCard style={ styles.cardAdditionalStyle } titleShown={false}>
                         <CButton text="Equipments" onPress={() => { 
-                            console.log('Equipments button pressed')
-                            console.log('Opening the Equipments screen')
-                            
                             navigation.navigate('Equipments')
                         }}/>
  
                         <CButton style={{ marginTop:10 }} text="Add Equipment" 
-                            onPress={() => { console.log('Add Equipment button pressed') }}/>
+                            onPress={() => { 
+                                navigation.navigate('EquipmentEntry')
+                            }}/>
  
                         <CButton style={{ marginTop:10 }} text="Maintenance Logs" 
                             onPress={() => { console.log('Maintenance Logs button pressed') }}/>

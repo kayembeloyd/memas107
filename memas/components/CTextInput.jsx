@@ -10,10 +10,19 @@ export default function CTextInput(props) {
                 <Text style={{ margin: 5, paddingLeft: 10, }}>{props.hint}</Text>
 
                 <View style={{ flexDirection: 'row'}}>
-                    <TextInput style={{ borderWidth: 0, flex: 1, paddingHorizontal: 20, outlineWidth:0,
-                        fontSize: 18, fontWeight: '400', fontFamily: 'Roboto', backgroundColor:'cyan', 
-                        height: 53, borderRadius: 10,}}/>
-                        
+                    {props.isFrozen ? (
+                        <TouchableOpacity style={{ flex: 1 }} onPress={props.onFrozenPress}>
+                            <View style={{ flex: 1, paddingHorizontal: 20, backgroundColor:'cyan', 
+                                height: 53, borderRadius: 10, justifyContent: 'center'}}>
+                                    <Text style={{fontSize: 18, fontWeight: '400', fontFamily: 'Roboto',}}>{props.ivalue}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        ) : (
+                        <TextInput style={{ borderWidth: 0, flex: 1, paddingHorizontal: 20, outlineWidth:0,
+                            fontSize: 18, fontWeight: '400', fontFamily: 'Roboto', backgroundColor:'cyan', 
+                            height: 53, borderRadius: 10,}}/>
+                    )}
+                    
                     {props.goButtonVisible ? (
                         <TouchableOpacity style={{backgroundColor: 'green', paddingHorizontal: 20, marginHorizontal: 10, 
                             borderRadius: 10, justifyContent:'center', elevation: 10}}>
