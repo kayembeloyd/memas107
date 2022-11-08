@@ -14,8 +14,8 @@ export default function CMaintenanceLogItem (props) {
                     <Text style={styles.attentionText}>Serial: props.equipment.serial_number </Text>
                     
                     <Text style={styles.noneAttentionText}>Make: props.equipment.make </Text>
-                    <Text>Model: props.equipment.model </Text>
-                    <Text>Dept: props.equipment.department </Text>
+                    <Text style={styles.noneAttentionText}>Model: props.equipment.model </Text>
+                    <Text style={styles.noneAttentionText}>Dept: props.equipment.department </Text>
                 </View>
             </View>
         </TouchableOpacity>
