@@ -1,19 +1,14 @@
-import {Realm, createRealmContext} from '@realm/react';
+// Assume import storage
+export default class Equipment {
 
-class Equipment extends Realm.Object { }
+    isReady = true
 
-Equipment.schema = {
-    name: "Equipment",
-    properties: {
-        e_id: "string",
-        e_oid: "string",
-        e_name: "string",
-    },
-    primaryKey: "e_id",
-};
+    constructor(e_id) {
+        // Get equipmeni
+             
+    }
 
-const config = {
-    schema: [Equipment],
-};
-
-export default createRealmContext(config);
+    constructor() {
+        // Get equipmeni
+    }
+}
