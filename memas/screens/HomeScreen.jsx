@@ -2,6 +2,7 @@ import React from 'react'
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
+
 import CCard from '../components/CCard';
 import CButton from '../components/CButton';
 import CScanButton from '../components/CScanButton';
@@ -45,7 +46,7 @@ export default function HomeScreen({ navigation }){
  
                         <CButton style={{ marginTop:10 }} text="Maintenance Schedule" 
                             onPress={() => { 
-                                Equipment.getEquipments(18, 6).then((results) => {
+                                Equipment.getEquipments(0, 6).then((results) => {
                                     console.log(results)
                                 })                              
                             }}/>

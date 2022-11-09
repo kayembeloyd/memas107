@@ -9,6 +9,7 @@ import CCustomModal from '../components/CCustomModal';
 import CListModal from '../components/CListModal';
 import CTextInput from '../components/CTextInput';
 import CToolbar from '../components/CToolbar';
+import Equipment from '../database/models/Equipment';
 import TechnicalSpecification from '../database/models/TechnicalSpecification';
 
 export default function EquipmentEntryScreen({ navigation }){
@@ -43,7 +44,7 @@ export default function EquipmentEntryScreen({ navigation }){
     const [selectDepartmentModalVisibility, setSelectDepartmentModalVisibility] = useState(false)
 
     const [selectCommissionDateModalVisibility, setSelectCommissionDateModalVisibility] = useState(false)
-    const [selectedCommissionDate, setSelectedCommissionDate] = React.useState('2020-02-01');
+    const [selectedCommissionDate, setSelectedCommissionDate] = useState('not set');
 
     const [addTechnicalSpecificationModalVisibility, setAddTechnicalSpecificationModalVisibility] = useState(false)
 
@@ -202,12 +203,16 @@ export default function EquipmentEntryScreen({ navigation }){
 
                 <CButton style={{width: '80%', alignSelf:'center', maxWidth: 400, marginVertical: 20}} 
                     text='Done' onPress={() => {
-                        console.log('Trying to save technical specifications')
                         const tss = new TechnicalSpecification()
                         tss.data.technical_specification = technicalSpecifications
                         tss.save().then((new_tss_id) => {
                             equipmentData.technical_specification_id = new_tss_id
-                            console.log(equipmentData)
+                            const eq = new Equipment()
+                            eq.data = equipmentData
+                            eq.save().then((new_e_id) => {
+                                alert('Equipment saved')
+                                navigation.goBack()
+                            })
                         })
                     }}/>
 

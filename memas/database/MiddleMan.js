@@ -16,7 +16,7 @@ export default class MiddleMan {
 
         let equipments = []
         let iCount = 1
-        let iMore = true
+        let iMore = false
         
         while (iCount < iSize) {
             const eq = {}
@@ -30,13 +30,17 @@ export default class MiddleMan {
             let lastEID = await LocalDatabase.getItem('last_e_id')
 
             iStart++
-            iStart > Number.parseInt(lastEID) ? iCount = iSize + 1 : iMore = false 
+
+            if (iStart > Number.parseInt(lastEID)) {
+                iMore = false
+                iCount = iSize + 1
+            }
         }
 
         const returnData = {
             data: equipments, 
             meta: {
-                lastIndex: equipments[equipments.length - 1].data.e_id,
+                lastIndex: equipments.length >= 1 ? equipments[equipments.length - 1].data.e_id : undefined,
                 more: iMore
             }
         }
