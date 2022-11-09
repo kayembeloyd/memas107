@@ -3,6 +3,7 @@ import LocalDatabase from "./LocalDatabase"
 export default class MiddleMan {
     static API_ADDRESS = 'localhost/memas107'
 
+    // For equipments
     static async getEquipment(e_id){
         return JSON.parse(
             await LocalDatabase.getItem('e_id' + e_id)
@@ -65,5 +66,36 @@ export default class MiddleMan {
         await LocalDatabase.setItem('e_id' + `${newEID}`, JSON.stringify(equipmentData))
 
         return newEID
+    }
+
+    // For technical specifications
+    static async getTechnicalSpecification(tss_id){
+        return JSON.parse(
+            await LocalDatabase.getItem('tss_id' + tss_id)
+        )
+    }
+
+    static async saveTechnicalSpecification(technicalSpecificationData){
+        if (technicalSpecificationData.tss_id){
+            if (await this.getEquipment(technicalSpecificationData.tss_id)){
+                await LocalDatabase.setItem('tss_id' + technicalSpecificationData.tss_id, `${JSON.stringify(technicalSpecificationData)}`)
+                return technicalSpecificationData.tss_id
+            }
+
+            return undefined
+        }
+        
+        
+        let lastTSSID = await LocalDatabase.getItem('last_tss_id')
+        let newTSSID = 0
+
+        lastTSSID ? newTSSID = Number.parseInt(lastTSSID) + 1 : newTSSID = 1
+
+        technicalSpecificationData.tss_id = newTSSID
+        
+        await LocalDatabase.setItem('last_tss_id', `${newTSSID}`)
+        await LocalDatabase.setItem('tss_id' + `${newTSSID}`, JSON.stringify(technicalSpecificationData))
+
+        return newTSSID
     }
 }

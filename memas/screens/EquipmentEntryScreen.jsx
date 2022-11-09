@@ -9,17 +9,16 @@ import CCustomModal from '../components/CCustomModal';
 import CListModal from '../components/CListModal';
 import CTextInput from '../components/CTextInput';
 import CToolbar from '../components/CToolbar';
+import TechnicalSpecification from '../database/models/TechnicalSpecification';
 
 export default function EquipmentEntryScreen({ navigation }){
 
     const [equipmentData, setEquipmentData] = useState({}) 
 
-    const [technicalSpecifications, setTechnicalSpecifications] = useState([
-        {id: 1, tsKey: 'spec 1', tsValue: 'spec value'},
-        {id: 2, tsKey: 'spec 2', tsValue: 'spec value'},
-        {id: 3, tsKey: 'spec 3', tsValue: 'spec value'},
-        {id: 4, tsKey: 'spec 4', tsValue: 'spec value'}
-    ])
+    const [tsKeyInEdit, setTsKeyInEdit] = useState('')
+    const [tsValueInEdit, setTsValueInEdit] = useState('')
+
+    const [technicalSpecifications, setTechnicalSpecifications] = useState([])
 
     const [departments, setDepartments] = useState([
         {id: 1, name:'Department 1'}, 
@@ -100,13 +99,26 @@ export default function EquipmentEntryScreen({ navigation }){
                                 }}/>
                             <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save' 
                                 onPress={() => {
+                                    setTechnicalSpecifications((prevTechnicalSpecifications) => {
+                                        let last = 0
+                                        if (prevTechnicalSpecifications.length >= 1){                       
+                                            last = prevTechnicalSpecifications[prevTechnicalSpecifications.length - 1].id
+                                        }
+                                        prevTechnicalSpecifications.push({id:(last + 1), tsKey: tsKeyInEdit, tsValue: `${(last + 1)}` + tsValueInEdit })
+                                        return prevTechnicalSpecifications
+                                    })
                                     setAddTechnicalSpecificationModalVisibility(false)
                                 }}/>
                         </View>
                     )}}>
                     <Text style={{ marginLeft: 10, marginTop: 10, marginBottom: 10, fontWeight: '500'}}>Add Technical Specification</Text>
-                    <CTextInput hint='Specification name'/>
-                    <CTextInput style={{ marginBottom: 10, }} hint='Specification value'/>
+                    <CTextInput hint='Specification name' onChangeText={(t) => {
+                        setTsKeyInEdit(t)
+                    }}/>
+
+                    <CTextInput style={{ marginBottom: 10, }} hint='Specification value' onChangeText={(t) => {
+                        setTsValueInEdit(t)
+                    }}/>
             </CCustomModal>
 
 
@@ -177,7 +189,7 @@ export default function EquipmentEntryScreen({ navigation }){
                     {
                         technicalSpecifications.map((element) => {
                             return (
-                                <Text key={element.id} style={ styles.infoText }>Rated Voltage: <Text style={ styles.infoValueText }>220VAC</Text>
+                                <Text key={element.id} style={ styles.infoText }>{element.tsKey}: <Text style={ styles.infoValueText }>{element.tsValue}</Text>
                                 </Text>
                             )
                         })
@@ -190,7 +202,13 @@ export default function EquipmentEntryScreen({ navigation }){
 
                 <CButton style={{width: '80%', alignSelf:'center', maxWidth: 400, marginVertical: 20}} 
                     text='Done' onPress={() => {
-                        console.log(equipmentData)
+                        console.log('Trying to save technical specifications')
+                        const tss = new TechnicalSpecification()
+                        tss.data.technical_specification = technicalSpecifications
+                        tss.save().then((new_tss_id) => {
+                            equipmentData.technical_specification_id = new_tss_id
+                            console.log(equipmentData)
+                        })
                     }}/>
 
             </ScrollView>
