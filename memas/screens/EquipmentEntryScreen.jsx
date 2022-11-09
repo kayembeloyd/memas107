@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { StyleSheet, ScrollView, View, Text } from 'react-native';
 
-import { DateSelectionCalendar, DefaultTheme } from 'react-native-easy-calendar'
+import { DateSelectionCalendar } from 'react-native-easy-calendar'
 
 import CButton from '../components/CButton';
 import CCard from '../components/CCard';
@@ -11,6 +11,8 @@ import CTextInput from '../components/CTextInput';
 import CToolbar from '../components/CToolbar';
 
 export default function EquipmentEntryScreen({ navigation }){
+
+    const [equipmentData, setEquipmentData] = useState({}) 
 
     const [technicalSpecifications, setTechnicalSpecifications] = useState([
         {id: 1, tsKey: 'spec 1', tsValue: 'spec value'},
@@ -54,6 +56,10 @@ export default function EquipmentEntryScreen({ navigation }){
                     setSelectDepartmentModalVisibility(false)
                 }}
                 onItemPress={(selectedItem)=>{
+                    setEquipmentData((prevEquipmentData) => {
+                        prevEquipmentData.department = selectedItem
+                        return prevEquipmentData
+                    })
                     setSelectedDepartment(selectedItem)
                     setSelectDepartmentModalVisibility(false)
                 }}/>
@@ -68,6 +74,10 @@ export default function EquipmentEntryScreen({ navigation }){
                                 }}/>
                             <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save' 
                                 onPress={() => {
+                                    setEquipmentData((prevEquipmentData) => {
+                                        prevEquipmentData.commission_date = selectedCommissionDate
+                                        return prevEquipmentData
+                                    })
                                     setSelectCommissionDateModalVisibility(false)
                                 }}/>
                         </View>
@@ -107,18 +117,60 @@ export default function EquipmentEntryScreen({ navigation }){
                 </View>
 
                 <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={true} title='General Info.'>
-                    <CTextInput hint='Name'/>
-                    <CTextInput hint='Asset tag'/>
+                    <CTextInput onChangeText={t => {
+                            setEquipmentData((prevEquipmentData) => {
+                                prevEquipmentData.name = t
+                                return prevEquipmentData
+                            })
+                        }} 
+                        hint='Name'/>
+
+                    <CTextInput onChangeText={t => {
+                            setEquipmentData((prevEquipmentData) => {
+                                prevEquipmentData.asset_tag = t
+                                return prevEquipmentData
+                            })
+                        }}
+                        hint='Asset tag'/>
+                    
                     <CTextInput isFrozen={true} ivalue={selectedDepartment} hint='Select Department' onFrozenPress={() => {
                         setSelectDepartmentModalVisibility(true)
                     }}/>
-                    <CTextInput hint='Make'/>
-                    <CTextInput hint='Model'/>
-                    <CTextInput hint='Serial Number'/>
+
+                    <CTextInput onChangeText={t => {
+                            setEquipmentData((prevEquipmentData) => {
+                                prevEquipmentData.make = t
+                                return prevEquipmentData
+                            })
+                        }} 
+                        hint='Make'/>
+                    
+                    <CTextInput onChangeText={t => {
+                            setEquipmentData((prevEquipmentData) => {
+                                prevEquipmentData.model = t
+                                return prevEquipmentData
+                            })
+                        }}  
+                        hint='Model'/>
+
+                    <CTextInput onChangeText={t => {
+                            setEquipmentData((prevEquipmentData) => {
+                                prevEquipmentData.serial_number = t
+                                return prevEquipmentData
+                            })
+                        }} 
+                        hint='Serial Number'/>
+                    
                     <CTextInput isFrozen={true} ivalue={selectedCommissionDate} hint='Commission date' onFrozenPress={() => {
                         setSelectCommissionDateModalVisibility(true)
                     }}/>
-                    <CTextInput hint='Supplied by'/>
+                    <CTextInput onChangeText={t => {
+                            setEquipmentData((prevEquipmentData) => {
+                                prevEquipmentData.supplied_by = t
+                                return prevEquipmentData
+                            })
+                        }} 
+                        hint='Supplied by'/>
                 </CCard>
 
                 <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={true} title='Technical specifications'>
@@ -136,7 +188,10 @@ export default function EquipmentEntryScreen({ navigation }){
                     }}/>
                 </CCard>
 
-                <CButton style={{width: '80%', alignSelf:'center', maxWidth: 400, marginVertical: 20}} text='Done'/>
+                <CButton style={{width: '80%', alignSelf:'center', maxWidth: 400, marginVertical: 20}} 
+                    text='Done' onPress={() => {
+                        console.log(equipmentData)
+                    }}/>
 
             </ScrollView>
         </View>

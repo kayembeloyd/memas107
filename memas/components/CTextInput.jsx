@@ -20,7 +20,7 @@ export default function CTextInput(props) {
                         ) : (
                         <TextInput style={{ borderWidth: 0, flex: 1, paddingHorizontal: 20, outlineWidth:0,
                             fontSize: 18, fontWeight: '400', fontFamily: 'Roboto', backgroundColor:'cyan', 
-                            height: 53, borderRadius: 10,}}/>
+                            height: 53, borderRadius: 10,}} onChangeText={props.onChangeText}/>
                     )}
                     
                     {props.goButtonVisible ? (
