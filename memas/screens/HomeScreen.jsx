@@ -45,25 +45,13 @@ export default function HomeScreen({ navigation }){
  
                         <CButton style={{ marginTop:10 }} text="Maintenance Schedule" 
                             onPress={() => { 
-                                let eq = new Equipment()
-                                eq.data.name = 'Lloyd Kayembe 1'
-                                console.log("Equipment before saving: " + JSON.stringify(eq.data))
-
-                                eq.save().then((e_id) => {
-                                    let eq2 = new Equipment()
-
-                                    eq2.load(e_id).then(() => {
-                                        console.log("Equipment After saving: " + JSON.stringify(eq.data))
-                                    })
-                                })
+                                Equipment.getEquipments(18, 6).then((results) => {
+                                    console.log(results)
+                                })                              
                             }}/>
                     </CCard>
-
-                    {/* You can always add more cards here
-                    TIP: dont forget to add width:'100%', maxWidth: 700 attributes */}
                 </View>
 
-                {/* This is a dummy View to create space for the scan button */}
                 <View style={{ height: 90, backgroundColor:'red' }}></View>
             </ScrollView>
 

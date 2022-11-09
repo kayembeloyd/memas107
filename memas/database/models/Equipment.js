@@ -5,12 +5,15 @@ export default class Equipment {
     }
 
     async load(e_id){
-        const equipmentData = await MiddleMan.getEquipment(e_id)
-        equipmentData ? this.data = equipmentData : this.data = {}
+        this.data = await MiddleMan.getEquipment(e_id)
     }
 
     async save() {
         this.data.e_id = await MiddleMan.saveEquipment(this.data)
         return this.data.e_id
+    }
+
+    static async getEquipments(lastIndex, size){
+        return await MiddleMan.getEquipments(lastIndex, size)
     }
 }
