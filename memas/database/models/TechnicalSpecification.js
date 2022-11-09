@@ -1,3 +1,3 @@
-export default class Equipment {
+export default class TechnicalSpecification {
     
 }

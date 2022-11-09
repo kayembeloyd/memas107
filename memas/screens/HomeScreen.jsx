@@ -6,6 +6,8 @@ import CCard from '../components/CCard';
 import CButton from '../components/CButton';
 import CScanButton from '../components/CScanButton';
 
+import Equipment from '../database/models/Equipment';
+
 export default function HomeScreen({ navigation }){
     return (
         <View style={styles.container}>
@@ -42,7 +44,19 @@ export default function HomeScreen({ navigation }){
                             }}/>
  
                         <CButton style={{ marginTop:10 }} text="Maintenance Schedule" 
-                            onPress={() => { console.log('Maintenance Schedule pressed') }}/>
+                            onPress={() => { 
+                                let eq = new Equipment()
+                                eq.data.name = 'Lloyd Kayembe 1'
+                                console.log("Equipment before saving: " + JSON.stringify(eq.data))
+
+                                eq.save().then((e_id) => {
+                                    let eq2 = new Equipment()
+
+                                    eq2.load(e_id).then(() => {
+                                        console.log("Equipment After saving: " + JSON.stringify(eq.data))
+                                    })
+                                })
+                            }}/>
                     </CCard>
 
                     {/* You can always add more cards here
