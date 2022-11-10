@@ -8,7 +8,7 @@ import CButton from '../components/CButton';
 import CCustomModal from '../components/CCustomModal';
 
 export default function MaintenanceLogEntryScreen({ route, navigation }){
-    
+
     const {item, maintenanceType} = route.params;
 
     const [maintenanceInfo, setMaintenanceInfo] = useState([
@@ -25,16 +25,16 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
 
     return (
         <View style={styles.container}>
-            
+
             <CCustomModal visible={addMaintenanceInfoModalVisibility}
                 actionButtonsComponent={() => {
                     return (
                         <View style={{ width: '100%', justifyContent: 'flex-end', flexDirection:'row'}}>
-                            <CButton style={{ marginRight: 10, marginBottom: 10}} text='Cancel' 
+                            <CButton style={{ marginRight: 10, marginBottom: 10}} text='Cancel'
                                 onPress={() => {
                                     setAddMaintenanceInfoModalVisibility(false)
                                 }}/>
-                            <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save' 
+                            <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save'
                                 onPress={() => {
                                     setAddMaintenanceInfoModalVisibility(false)
                                 }}/>
@@ -59,11 +59,11 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                     <Text style={styles.noneAttentionText}>Make: props.equipment.make </Text>
                     <Text style={styles.noneAttentionText}>Model: props.equipment.model </Text>
                     <Text style={styles.noneAttentionText}>Dept: props.equipment.department </Text>
-                    
+
                     <CTextInput style={{width: '100%', alignSelf:'flex-start', maxWidth: 700,}} hint='Maintenance description'/>
                 </View>
-                
-                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={true} title='Other info' >    
+
+                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={true} title='Other info' >
                     {
                         maintenanceInfo.map((element) => {
                             return (
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'green',
         marginTop: 36,
-    }, 
+    },
 
     searchBarContainer: {
         backgroundColor: 'gold',
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     attentionText: {
         fontWeight: '500',
         fontSize: 18,
-    }, 
+    },
 
     noneAttentionText: {
         fontSize: 16

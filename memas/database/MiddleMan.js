@@ -102,4 +102,73 @@ export default class MiddleMan {
 
         return newTSSID
     }
+
+    // For maintenanceLogs
+    static async getMaintenanceLog(ml_id){
+        return JSON.parse(
+            await LocalDatabase.getItem('ml_id' + ml_id)
+        )
+    }
+
+    static async getMaintenanceLogs(lastIndex, size){
+        let iStart = lastIndex
+        let iSize = size
+
+        let maintenanceLogs = []
+        let iCount = 1
+        let iMore = true
+        
+        while (iCount < iSize) {
+            const eq = {}
+            eq.data = await this.getMaintenanceLog(iStart)
+
+            if (eq.data){
+                maintenanceLogs.push(eq)
+                iCount++
+            }
+
+            let lastMLID = await LocalDatabase.getItem('last_ml_id')
+            lastMLID ? 0 : lastMLID = 0
+            iStart++
+
+            if (iStart > Number.parseInt(lastMLID)) {
+                iMore = false
+                iCount = iSize + 1
+            }
+        }
+
+        const returnData = {
+            data: maintenanceLogs, 
+            meta: {
+                lastIndex: maintenanceLogs.length >= 1 ? maintenanceLogs[maintenanceLogs.length - 1].data.ml_id : undefined,
+                more: iMore
+            }
+        }
+
+        return returnData
+    }
+
+    static async saveMaintenanceLog(maintenanceLogData){
+        if (maintenanceLogData.ml_id){
+            if (await this.getMaintenanceLog(maintenanceLogData.ml_id)){
+                await LocalDatabase.setItem('ml_id' + maintenanceLogData.ml_id, `${JSON.stringify(maintenanceLogData)}`)
+                return maintenanceLogData.ml_id
+            }
+
+            return undefined
+        }
+        
+        
+        let lastMLID = await LocalDatabase.getItem('last_ml_id')
+        let newMLID = 0
+
+        lastMLID ? newMLID = Number.parseInt(lastMLID) + 1 : newMLID = 1
+
+        maintenanceLogData.ml_id = newMLID
+        
+        await LocalDatabase.setItem('last_ml_id', `${newMLID}`)
+        await LocalDatabase.setItem('ml_id' + `${newMLID}`, JSON.stringify(maintenanceLogData))
+
+        return newMLID
+    }
 }
