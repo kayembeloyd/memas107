@@ -1,19 +1,25 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { DateSelectionCalendar, DefaultTheme } from 'react-native-easy-calendar'
+
+import TechnicalSpecification from '../database/models/TechnicalSpecification';
 
 import CToolbar from '../components/CToolbar';
 import CCard from '../components/CCard';
 import CButton from '../components/CButton';
 import CCustomModal from '../components/CCustomModal';
+import Equipment from '../database/models/Equipment';
 
 
 export default function EquipmentScreen({ route, navigation }){
 
     const {item} = route.params;
 
-    const [selectedNextServiceDate, setSelectedNextServiceDate] = React.useState('2020-02-01');
+    const [technicalSpecification, setTechnicalSpecification] = useState([])
+
+    const [nextServiceDate, setNextServiceDate] = useState('')
+    const [selectedNextServiceDate, setSelectedNextServiceDate] = useState('2020-02-01');
 
     const [statuses, setStatuses] = useState([
         {id: 1, name:'Status 1'},
@@ -27,9 +33,22 @@ export default function EquipmentScreen({ route, navigation }){
     const [statusModalVisibility, setStatusModalVisibility] = useState(false)
     const [selectNextServiceModalVisibility, setSelectNextServiceModalVisibility] = useState(false)
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => { 
+            // Fetch technical specification
+            const technical_specification = new TechnicalSpecification()
+            technical_specification.load(item.data.technical_specification_id).then(() => {
+                setTechnicalSpecification(technical_specification.data.technical_specification)
+            })
+
+            setEquipmentStatus(item.data.status)
+            setNextServiceDate(item.data.next_service_date)
+        });
+
+    }, [navigation])
+
     return (
         <View style={styles.container}>
-
             <CCustomModal visible={statusModalVisibility}
                 actionButtonsComponent={() => {
                     return (
@@ -40,6 +59,12 @@ export default function EquipmentScreen({ route, navigation }){
                                 }}/>
                             <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save' 
                                 onPress={() => {
+                                    item.data.status = statuses[currentStatusIndex].name
+                                    // save equipment
+                                    var eq = new Equipment();
+                                    eq.data = item.data
+                                    eq.save()
+
                                     setEquipmentStatus(statuses[currentStatusIndex].name)
                                     setStatusModalVisibility(false)
                                 }}/>
@@ -67,39 +92,49 @@ export default function EquipmentScreen({ route, navigation }){
                                 }}/>
                             <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save' 
                                 onPress={() => {
+                                    item.data.next_service_date = selectedNextServiceDate
+                                    // save equipment
+                                    var eq = new Equipment();
+                                    eq.data = item.data
+                                    eq.save()
+
+                                    setNextServiceDate(selectedNextServiceDate)
+                                    
                                     setSelectNextServiceModalVisibility(false)
                                 }}/>
                         </View>
-                    )}}>
+                    )}}> 
                     <Text style={{ marginLeft: 10, marginTop: 10, marginBottom: 10, fontWeight: '500'}}>Select Next Service Date</Text>
                     <DateSelectionCalendar
                         allowYearView={true}
                         showExtraDates={true}
-                        onSelectDate={setSelectedNextServiceDate}
+                        onSelectDate={(date) => {
+                            setSelectedNextServiceDate(date)
+                        }}
                         selectedDate={selectedNextServiceDate} /> 
 
             </CCustomModal>
 
             <ScrollView stickyHeaderIndices={[0]} >
                 <View style={ styles.searchBarContainer }>
-                    <CToolbar style={{ width: '100%', maxWidth: 700 }} text={ 'Equipment ' + item.id }
+                    <CToolbar style={{ width: '100%', maxWidth: 700 }} text={ item.data.name }
                         onBackPress={() => navigation.goBack()}/>
                 </View>
 
                 <CCard style={{ backgroundColor: 'purple' }} titleShown={true} title='General Info'>
-                    <Text style={ styles.infoText }>Name: <Text style={ styles.infoValueText }>Oxygen concentrator</Text>
+                    <Text style={ styles.infoText }>Name: <Text style={ styles.infoValueText }>{item.data.name}</Text>
                     </Text>
 
-                    <Text style={ styles.infoText }>Department: <Text style={ styles.infoValueText }>Labour Ward</Text>
+                    <Text style={ styles.infoText }>Department: <Text style={ styles.infoValueText }>{item.data.department}</Text>
                     </Text>
 
-                    <Text style={ styles.infoText}>Make: <Text style={ styles.infoValueText }>Canta</Text>
+                    <Text style={ styles.infoText}>Make: <Text style={ styles.infoValueText }>{item.data.make}</Text>
                     </Text>
 
-                    <Text style={ styles.infoText }>Model: <Text style={ styles.infoValueText }>VN-WS-08</Text>
+                    <Text style={ styles.infoText }>Model: <Text style={ styles.infoValueText }>{item.data.model}</Text>
                     </Text>
 
-                    <Text style={ styles.infoText }>Serial number: <Text style={ styles.infoValueText }>AED2DD213</Text>
+                    <Text style={ styles.infoText }>Serial number: <Text style={ styles.infoValueText }>{item.data.serial_number}</Text>
                     </Text>
                 </CCard>
 
@@ -108,10 +143,10 @@ export default function EquipmentScreen({ route, navigation }){
                     <Text style={ styles.infoText }>Equipment status: <Text style={ styles.infoValueText }>{equipmentStatus}</Text>
                     </Text>
                     
-                    <Text style={ styles.infoText }>Last maintenance date: <Text style={ styles.infoValueText }>08/11/2022</Text>
+                    <Text style={ styles.infoText }>Last maintenance date: <Text style={ styles.infoValueText }>{item.data.last_maintenance_date}</Text>
                     </Text>
                     
-                    <Text style={ styles.infoText }>Next Service: <Text style={ styles.infoValueText }>08/11/2022</Text>
+                    <Text style={ styles.infoText }>Next Service: <Text style={ styles.infoValueText }>{nextServiceDate}</Text>
                     </Text>
 
                 </CCard>
@@ -140,18 +175,21 @@ export default function EquipmentScreen({ route, navigation }){
                 </CCard>
 
                 <CCard style={{ backgroundColor: 'purple',  marginTop: 20}} titleShown={true} title='Technical Specification'>
-                    <Text style={ styles.infoText }>Rated Voltage: <Text style={ styles.infoValueText }>220VAC</Text>
-                    </Text>
-
-                    <Text style={ styles.infoText }>Capacity: <Text style={ styles.infoValueText }>10lpm</Text>
-                    </Text>
+                    {
+                        technicalSpecification.map((element) => {
+                            return (
+                                <Text key={element.id} style={ styles.infoText }>{element.tsKey}: <Text style={ styles.infoValueText }>{element.tsValue}</Text>
+                                </Text>            
+                            )
+                        })
+                    }
                 </CCard>
 
                 <CCard style={{ backgroundColor: 'purple',  marginTop: 20}} titleShown={true} title='Other Info'>
-                    <Text style={ styles.infoText }>Supplied by: <Text style={ styles.infoValueText }>Ministry of Health</Text>
+                    <Text style={ styles.infoText }>Supplied by: <Text style={ styles.infoValueText }>{item.data.supplied_by}</Text>
                     </Text>
 
-                    <Text style={ styles.infoText }>Commision date: <Text style={ styles.infoValueText }>06/11/2022</Text>
+                    <Text style={ styles.infoText }>Commision date: <Text style={ styles.infoValueText }>{item.data.commission_date}</Text>
                     </Text>
                 </CCard>
             </ScrollView>
