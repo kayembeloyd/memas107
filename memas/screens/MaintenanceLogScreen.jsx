@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
+
+import Equipment from '../database/models/Equipment'
+import MaintenanceLogInfo from '../database/models/MaintenanceLogInfo'
 
 import CToolbar from '../components/CToolbar';
 import CCard from '../components/CCard';
@@ -8,39 +11,55 @@ export default function MaintenanceLogScreen({ route, navigation }){
     
     const {item} = route.params;
 
+    const [equipment, setEquipment] = useState({data:{}})
+
     const [maintenanceInfo, setMaintenanceInfo] = useState([
-        {id: 1, miKey: 'maintenace info 1', miValue: 'maintenance value'},
-        {id: 2, miKey: 'maintenace info 2', miValue: 'maintenance value'},
-        {id: 3, miKey: 'maintenace info 3', miValue: 'maintenance value'},
-        {id: 4, miKey: 'maintenace info 4', miValue: 'maintenance value'},
+        {id: 1, mliKey: 'maintenace info 1', mliValue: 'maintenance value'},
+        {id: 2, mliKey: 'maintenace info 2', mliValue: 'maintenance value'},
+        {id: 3, mliKey: 'maintenace info 3', mliValue: 'maintenance value'},
+        {id: 4, mliKey: 'maintenace info 4', mliValue: 'maintenance value'},
     ])
+
+    useEffect(() => {
+        let mli = new MaintenanceLogInfo()
+        mli.load(item.data.maintenance_log_info_id).then(() => {
+            console.log('mli.data:', mli.data)
+            setMaintenanceInfo(mli.data.maintenance_log_info)
+        })
+
+        let eq = new Equipment()
+        eq.load(item.data.equipment_id).then(() => {
+            console.log('eq.data:', eq.data)
+            setEquipment(eq)
+        })
+    }, [])
 
     return (
         <View style={styles.container}>
             <ScrollView stickyHeaderIndices={[0]} >
                 <View style={ styles.searchBarContainer }>
-                    <CToolbar style={{ width: '100%', maxWidth: 700 }} text={ 'Maintenance Log ' + item.id }
+                    <CToolbar style={{ width: '100%', maxWidth: 700 }} text={ 'Maintenance Log' }
                         onBackPress={() => navigation.goBack()}/>
                 </View>
 
                 <View style={{ margin: 10, backgroundColor: 'gold' }}>
-                    <Text style={{fontWeight: '500', fontSize: 22, marginBottom: 30}}>Date: 06/11/2022 </Text>
-                    <Text style={{fontWeight: '500', fontSize: 20,}}>Oxygen Concentrator </Text>
-                    <Text style={styles.attentionText}>Maintenance Type: props.maintenanceType </Text>
-                    <Text style={styles.attentionText}>Serial: props.equipment.serial_number </Text>
-                    <Text style={styles.noneAttentionText}>Make: props.equipment.make </Text>
-                    <Text style={styles.noneAttentionText}>Model: props.equipment.model </Text>
-                    <Text style={styles.noneAttentionText}>Dept: props.equipment.department </Text>
+                    <Text style={{fontWeight: '500', fontSize: 22, marginBottom: 30}}>Date: { item.data.date }</Text>
+                    <Text style={{fontWeight: '500', fontSize: 20,}}>{equipment.data.name}</Text>
+                    <Text style={styles.attentionText}>Maintenance Type: {item.data.type}</Text>
+                    <Text style={styles.attentionText}>SN: {equipment.data.serial_number}</Text>
+                    <Text style={styles.noneAttentionText}>Make: {equipment.data.make}</Text>
+                    <Text style={styles.noneAttentionText}>Model: {equipment.data.model}</Text>
+                    <Text style={styles.noneAttentionText}>Dept: {equipment.data.department}</Text>
                     
                     <Text style={{fontWeight: '500', fontSize: 18, marginTop: 20, marginBottom: 10}}> Maintenance description</Text>
-                    <Text style={{fontWeight: '300', fontSize: 18,}}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged</Text>
+                    <Text style={{fontWeight: '300', fontSize: 18,}}>{ item.data.description }</Text>
                 </View>
                 
                 <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={true} title='Other info' >    
                     {
                         maintenanceInfo.map((element) => {
                             return (
-                                <Text key={element.id} style={ styles.infoText }>{element.miKey}: <Text style={ styles.infoValueText }>{element.miValue}</Text>
+                                <Text key={element.id} style={ styles.infoText }>{element.mliKey}: <Text style={ styles.infoValueText }>{element.mliValue}</Text>
                                 </Text>
                             )
                         })
