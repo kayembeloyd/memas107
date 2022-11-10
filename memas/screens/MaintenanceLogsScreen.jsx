@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, ScrollView, FlatList, Image, Modal, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, FlatList } from 'react-native';
 
 import CSearchBar from '../components/CSearchBar';
 import CFilterBar from '../components/CFilterBar';
 import CFilterItem from '../components/CFilterItem';
-import CEquipmentItem from '../components/CEquipmentItem'
-import CScanButton from '../components/CScanButton';
 import CListModal from '../components/CListModal';
 import CMaintenanceLogItem from '../components/CMaintenanceLogItem';
+import MaintenanceLog from '../database/models/MaintenanceLog';
 
 export default function MaintenanceLogs({ route, navigation }){
 
     const { filtering, filterEquipment } = route.params;
 
-    const [maintenanceLogs, setMaintenanceLogs] = useState([
-        {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11}])
+    const [maintenanceLogs, setMaintenanceLogs] = useState([])
     
     // For the FilterBar
     const [departments, setDepartments] = useState([
@@ -62,11 +60,42 @@ export default function MaintenanceLogs({ route, navigation }){
         }
     } 
 
+    const [iIsLoading, setIIsLoading] = useState(false)
+    const [iMore, setIMore] = useState(true)
+    const [iLastIndex, setILastIndex] = useState(0)    
+    const loadMaintenanceLogs = () => {
+        if (iMore){
+            setIIsLoading(true)
+
+            MaintenanceLog.getMaintenanceLogs(iLastIndex + 1, 5).then((results) => {
+                setIIsLoading(false)
+
+                const mlogs = results.data
+                setMaintenanceLogs((prevMaintenanceLogs) => {
+                    prevMaintenanceLogs.push(...mlogs)
+                    return prevMaintenanceLogs
+                })
+
+                results.meta.lastIndex ? setILastIndex(results.meta.lastIndex) : setILastIndex(0)
+                setIMore(results.meta.more)
+            })
+        } else {
+            setIIsLoading(false)
+        }
+    }
+
     useEffect(() => {
         if (filtering === 'on'){
-            console.log('filteringEquipment: ', filterEquipment)
         }
-    })
+
+        const unsubscribe = navigation.addListener('focus', () => { 
+            setMaintenanceLogs([])
+            loadMaintenanceLogs()
+        });
+
+        return unsubscribe;
+    }, [navigation])
+
     return (
         <View style={styles.container}>
             {/** Here goes the filterSelectModal modal */}
@@ -116,9 +145,9 @@ export default function MaintenanceLogs({ route, navigation }){
                 stickyHeaderIndices={[0]}
                 stickyHeaderHiddenOnScroll={true}
                 data={maintenanceLogs}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.data.ml_id}
                 renderItem={({ item }) => (
-                    <CMaintenanceLogItem onPress={() => {
+                    <CMaintenanceLogItem equipment_id= {item.data.equipment_id} type={item.data.type} date={item.data.date} onPress={() => {
                         navigation.navigate('MaintenanceLog',  { item })
                     }}/>
                 )}

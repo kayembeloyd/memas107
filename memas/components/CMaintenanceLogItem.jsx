@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
 export default function CMaintenanceLogItem (props) {
     
+    useEffect(() => {
+        
+    })
+
     return (
         <TouchableOpacity onPress={props.onPress}>
             <View style={styles.container}> 
                 <View style={{ marginLeft:5 }}>
                     <Text style={{color:'#444444', fontSize: 20, fontWeight: '700',}}>
                         props.equipment.name</Text>
-                    <Text style={styles.attentionText}>Maintenance Type: props.maintenanceType </Text>
-                    <Text style={styles.attentionText}>Date: props.date </Text>
+                    <Text style={styles.attentionText}>Maintenance Type: {props.type} </Text>
+                    <Text style={styles.attentionText}>Date: {props.date} </Text>
                     <Text style={styles.attentionText}>Serial: props.equipment.serial_number </Text>
                     
                     <Text style={styles.noneAttentionText}>Make: props.equipment.make </Text>

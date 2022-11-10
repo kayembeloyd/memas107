@@ -26,6 +26,8 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
     useEffect(() => {
         setMaintenanceData((prevMaintenanceData) => {
             prevMaintenanceData.type = maintenanceType
+            prevMaintenanceData.equipment_id = item.data.e_id
+            prevMaintenanceData.date = '06/11/2022'
             return prevMaintenanceData
         })
     })
