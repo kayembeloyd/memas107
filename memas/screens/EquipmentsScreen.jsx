@@ -101,7 +101,7 @@ export default function EquipmentsScreen({ navigation }){
     }
 
     useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
+        const unsubscribe = navigation.addListener('focus', () => { 
             setEquipments([])
             loadEquipments()
         });

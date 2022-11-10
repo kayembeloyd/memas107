@@ -7,12 +7,12 @@ export default function CEquipmentItem (props) {
         <TouchableOpacity onPress={props.onPress}>
             <View style={styles.container}> 
                 <View style={{ marginLeft:5 }}>
-                    <View style={{ flexDirection: 'row', paddingBottom: 5, }}>
+                    <View style={{ flexDirection: 'row', }}>
                         <Text style={styles.equipmentHeaderText}>{props.asset_tag}</Text>
                         <Text>Working</Text>
                     </View>
 
-                    <Text style={{color:'#444444', fontSize: 18, fontWeight: '700',}}>
+                    <Text style={{fontSize: 20, fontWeight: '700', paddingBottom: 5,}}>
                         {props.name}</Text>
                     <Text style={styles.equipmentDesc}>Department: {props.department}</Text>
                     <Text style={styles.equipmentDesc}>Make: {props.make}</Text>
@@ -33,13 +33,12 @@ const styles = StyleSheet.create({
 
     equipmentHeaderText: {
         flex: 1,
-        fontSize:16,
+        fontSize:15,
         fontWeight:'400',
         padding:0
     },
 
     equipmentDesc: {
-        color:'#444444',
         fontSize: 16,
     }
 })
