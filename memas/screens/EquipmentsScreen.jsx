@@ -50,9 +50,9 @@ export default function EquipmentsScreen({ navigation }){
 
     const [statuses, setStatuses] = useState([
         {id: 0, name:'All'},
-        {id: 1, name:'Status 1'},
-        {id: 2, name:'Status 2'},
-        {id: 3, name:'Status 3'},
+        {id: 1, name:'Operational'},
+        {id: 2, name:'Idle'},
+        {id: 3, name:'Broken'},
     ])
     const [selectedStatus, setSelectedStatus] = useState('All')
 

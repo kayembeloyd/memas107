@@ -13,12 +13,7 @@ export default function MaintenanceLogScreen({ route, navigation }){
 
     const [equipment, setEquipment] = useState({data:{}})
 
-    const [maintenanceInfo, setMaintenanceInfo] = useState([
-        {id: 1, mliKey: 'maintenace info 1', mliValue: 'maintenance value'},
-        {id: 2, mliKey: 'maintenace info 2', mliValue: 'maintenance value'},
-        {id: 3, mliKey: 'maintenace info 3', mliValue: 'maintenance value'},
-        {id: 4, mliKey: 'maintenace info 4', mliValue: 'maintenance value'},
-    ])
+    const [maintenanceInfo, setMaintenanceInfo] = useState([])
 
     useEffect(() => {
         let mli = new MaintenanceLogInfo()

@@ -22,9 +22,9 @@ export default function EquipmentScreen({ route, navigation }){
     const [selectedNextServiceDate, setSelectedNextServiceDate] = useState('2020-02-01');
 
     const [statuses, setStatuses] = useState([
-        {id: 1, name:'Status 1'},
-        {id: 2, name:'Status 2'},
-        {id: 3, name:'Status 3'},
+        {id: 1, name:'Operational'},
+        {id: 2, name:'Idle'},
+        {id: 3, name:'Broken'},
     ])
 
     const [currentStatusIndex, setCurrentStatusIndex] = useState(0)
