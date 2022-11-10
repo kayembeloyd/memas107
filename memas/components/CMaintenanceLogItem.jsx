@@ -1,25 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+
+import Equipment from '../database/models/Equipment'
 
 export default function CMaintenanceLogItem (props) {
     
+    const [equipment, setEquipment] = useState({data:{}})
+
     useEffect(() => {
-        
-    })
+        let eq = new Equipment()
+        eq.load(props.equipment_id).then(() => {
+            setEquipment(eq)
+        })
+    }, [props])
 
     return (
         <TouchableOpacity onPress={props.onPress}>
             <View style={styles.container}> 
                 <View style={{ marginLeft:5 }}>
                     <Text style={{color:'#444444', fontSize: 20, fontWeight: '700',}}>
-                        props.equipment.name</Text>
+                        {equipment.data.name} </Text>
                     <Text style={styles.attentionText}>Maintenance Type: {props.type} </Text>
                     <Text style={styles.attentionText}>Date: {props.date} </Text>
-                    <Text style={styles.attentionText}>Serial: props.equipment.serial_number </Text>
+                    <Text style={styles.attentionText}>Serial: {equipment.data.serial_number} </Text>
                     
-                    <Text style={styles.noneAttentionText}>Make: props.equipment.make </Text>
-                    <Text style={styles.noneAttentionText}>Model: props.equipment.model </Text>
-                    <Text style={styles.noneAttentionText}>Dept: props.equipment.department </Text>
+                    <Text style={styles.noneAttentionText}>Make: {equipment.data.make} </Text>
+                    <Text style={styles.noneAttentionText}>Model: {equipment.data.model} </Text>
+                    <Text style={styles.noneAttentionText}>Dept: {equipment.data.department} </Text>
                 </View>
             </View>
         </TouchableOpacity>

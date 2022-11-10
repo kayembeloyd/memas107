@@ -106,7 +106,8 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                 </CCard>
 
                 <View style={{alignItems: 'center'}}>
-                    <CButton style= {{ marginVertical: 20, marginHorizontal: 20, width: '100%', maxWidth: 500 }} text="Done"
+                    <CButton style= {{ marginVertical: 20, marginHorizontal: 20, width: '100%', maxWidth: 500 }} 
+                        text="Done"
                         onPress={() => {
                             const mli = new MaintenanceLogInfo()
                             mli.data.maintenance_log_info = maintenanceInfo

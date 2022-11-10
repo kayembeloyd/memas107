@@ -147,7 +147,7 @@ export default function MaintenanceLogs({ route, navigation }){
                 data={maintenanceLogs}
                 keyExtractor={(item) => item.data.ml_id}
                 renderItem={({ item }) => (
-                    <CMaintenanceLogItem equipment_id= {item.data.equipment_id} type={item.data.type} date={item.data.date} onPress={() => {
+                    <CMaintenanceLogItem equipment_id={item.data.equipment_id} type={item.data.type} date={item.data.date} onPress={() => {
                         navigation.navigate('MaintenanceLog',  { item })
                     }}/>
                 )}
