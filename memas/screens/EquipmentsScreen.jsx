@@ -76,13 +76,17 @@ export default function EquipmentsScreen({ navigation }){
         }
     }
 
+    const [iIsLoading, setIIsLoading] = useState(false)
     const [iMore, setIMore] = useState(true)
     const [iLastIndex, setILastIndex] = useState(0)    
     const loadEquipments = () => {
         if (iMore){
-            Equipment.getEquipments(iLastIndex, 7).then((results) => {
-                const eqs = results.data
+            setIIsLoading(true)
 
+            Equipment.getEquipments(iLastIndex + 1, 5).then((results) => {
+                setIIsLoading(false)
+
+                const eqs = results.data
                 setEquipments((prevEquipments) => {
                     prevEquipments.push(...eqs)
                     return prevEquipments
@@ -92,7 +96,7 @@ export default function EquipmentsScreen({ navigation }){
                 setIMore(results.meta.more)
             })
         } else {
-            // No more
+            setIIsLoading(false)
         }
     }
 
@@ -107,7 +111,6 @@ export default function EquipmentsScreen({ navigation }){
 
     return (
         <View style={styles.container}>
-            {/** Here goes the filterSelectModal modal */}
             <CListModal visible={selectDepartmentModalVisibility} title='Select department' list={departments} 
                 onCancelPress={()=>{
                     setSelectDepartmentModalVisibility(false)
@@ -158,8 +161,16 @@ export default function EquipmentsScreen({ navigation }){
                         </View>
                     )
                 }}
-                onEndReached={() => {
-                    console.log('end reached')
+                ListFooterComponent= { () => {
+                    return (
+                        <View style={{alignItems: 'center'}}>
+                            {
+                                iMore ? <CButton  style={{ marginVertical: 20, width:'100%', maxWidth: 300}} text={'Load more'} onPress={() => {
+                                    loadEquipments()
+                                }}/> : iIsLoading ? <CButton  style={{ marginVertical: 20, width:'100%', maxWidth: 300}} text={'Loading...'} /> : <></>
+                            }
+                        </View>
+                    )
                 }}
                 stickyHeaderIndices={[0]}
                 stickyHeaderHiddenOnScroll={true}
@@ -167,7 +178,7 @@ export default function EquipmentsScreen({ navigation }){
                 keyExtractor={(item) => item.data.e_id}
                 renderItem={({ item }) => (
                     <CEquipmentItem name={item.data.name} department={item.data.department} 
-                        model={item.data.model} make={item.data.make} asset_tag={item.data.asset_tag} status='To be determined'
+                        model={item.data.model} make={item.data.make} asset_tag={item.data.asset_tag} status='not set'
                         onPress={() => {
                             navigation.navigate('Equipment', { item })
                         }} />
@@ -200,6 +211,5 @@ const styles = StyleSheet.create({
 
     filterBarContainer: {
         marginTop: 10,
-    },
-    
+    },  
 })

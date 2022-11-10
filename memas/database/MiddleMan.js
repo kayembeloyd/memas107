@@ -16,7 +16,7 @@ export default class MiddleMan {
 
         let equipments = []
         let iCount = 1
-        let iMore = false
+        let iMore = true
         
         while (iCount < iSize) {
             const eq = {}
