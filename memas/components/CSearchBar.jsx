@@ -20,7 +20,7 @@ export default function CSearchBar(props) {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor:'green',
+        backgroundColor:'#F5F5F5',
         borderRadius: 10,
         flexDirection: 'row',
         paddingHorizontal: 10,
@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
     },
 
     input:{
-        backgroundColor: 'red',
         flex: 1,
         height: '100%',
         borderWidth: 0,

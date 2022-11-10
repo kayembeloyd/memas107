@@ -18,7 +18,7 @@ export default function CFilterBar(props) {
 
 const styles = StyleSheet.create({
     container:{
-        backgroundColor: 'magenta',
+        backgroundColor: '#D9D9D9',
         height:52,
     },
 

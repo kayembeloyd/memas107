@@ -125,7 +125,7 @@ export default function EquipmentsScreen({ navigation }){
 
             <FlatList ListHeaderComponent = {() => {
                     return (
-                        <View style={{ backgroundColor: 'black'}}>
+                        <View style={{ }}>
                             <View style={ styles.searchBarContainer }>
                                 <CSearchBar style={{ width: '100%', maxWidth: 700 }} searchbar_hint="search equipments"
                                     onBackPress={() => navigation.goBack()}/>
@@ -182,11 +182,11 @@ const styles = StyleSheet.create({
     container: {
         flex:1,
         height: '100%',
+        backgroundColor: 'white',
         marginTop: 0,
     },
 
     searchBarContainer: {
-        backgroundColor: 'gold',
         flexDirection: 'row',
         justifyContent: 'center',
         alignContent: 'center',
@@ -195,6 +195,6 @@ const styles = StyleSheet.create({
     },
 
     filterBarContainer: {
-        marginTop: 10,
+        marginTop: 5,
     },  
 })

@@ -19,13 +19,13 @@ export default function CEquipmentItem (props) {
                     <Text style={styles.equipmentDesc}>Model: {props.model}</Text>
                 </View>
             </View>
+            <View style={{ height: 1, backgroundColor: '#CBCBCB', width: '100%'}}></View>
         </TouchableOpacity>
     );
 }
 
 const styles = StyleSheet.create({
     container:{
-        backgroundColor: 'green',
         marginVertical: 1,
         padding:11,
         justifyContent: 'center',
