@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, ScrollView, FlatList, Image, Modal, Text, TouchableOpacity } from 'react-native';
 
 import CSearchBar from '../components/CSearchBar';
@@ -62,6 +62,11 @@ export default function MaintenanceLogs({ route, navigation }){
         }
     } 
 
+    useEffect(() => {
+        if (filtering === 'on'){
+            console.log('filteringEquipment: ', filterEquipment)
+        }
+    })
     return (
         <View style={styles.container}>
             {/** Here goes the filterSelectModal modal */}
@@ -89,7 +94,7 @@ export default function MaintenanceLogs({ route, navigation }){
                             <View style={ styles.searchBarContainer }>
                                 <CSearchBar 
                                     style={{ width: '100%', maxWidth: 700 }} 
-                                    searchbar_hint={'Filtering(' + filtering + ')' + (filterEquipment ? '(Equipment ' + filterEquipment.id + ')' : '')}
+                                    searchbar_hint={'Filtering(' + filtering + ')' + (filterEquipment ? '(' + filterEquipment.data.name + ')' : '')}
                                     onBackPress={() => navigation.goBack()}/>
                             </View>
                             

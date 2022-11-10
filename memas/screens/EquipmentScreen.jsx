@@ -35,14 +35,13 @@ export default function EquipmentScreen({ route, navigation }){
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => { 
-            // Fetch technical specification
             const technical_specification = new TechnicalSpecification()
             technical_specification.load(item.data.technical_specification_id).then(() => {
                 setTechnicalSpecification(technical_specification.data.technical_specification)
             })
 
-            setEquipmentStatus(item.data.status)
-            setNextServiceDate(item.data.next_service_date)
+            setEquipmentStatus(item.data.status ? item.data.status : '(not set)')
+            setNextServiceDate(item.data.next_service_date ? item.data.next_service_date : '(not set)')
         });
 
     }, [navigation])
@@ -93,7 +92,6 @@ export default function EquipmentScreen({ route, navigation }){
                             <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save' 
                                 onPress={() => {
                                     item.data.next_service_date = selectedNextServiceDate
-                                    // save equipment
                                     var eq = new Equipment();
                                     eq.data = item.data
                                     eq.save()
@@ -143,7 +141,7 @@ export default function EquipmentScreen({ route, navigation }){
                     <Text style={ styles.infoText }>Equipment status: <Text style={ styles.infoValueText }>{equipmentStatus}</Text>
                     </Text>
                     
-                    <Text style={ styles.infoText }>Last maintenance date: <Text style={ styles.infoValueText }>{item.data.last_maintenance_date}</Text>
+                    <Text style={ styles.infoText }>Last maintenance date: <Text style={ styles.infoValueText }>{item.data.last_maintenance_date ? item.data.last_maintenance_date : '(not set)'}</Text>
                     </Text>
                     
                     <Text style={ styles.infoText }>Next Service: <Text style={ styles.infoValueText }>{nextServiceDate}</Text>

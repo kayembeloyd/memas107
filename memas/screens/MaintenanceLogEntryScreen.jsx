@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 
 import CToolbar from '../components/CToolbar';
@@ -19,6 +19,9 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
     ])
 
     const [addMaintenanceInfoModalVisibility, setAddMaintenanceInfoModalVisibility] = useState(false)
+
+    useEffect(() => {
+    })
 
     return (
         <View style={styles.container}>
