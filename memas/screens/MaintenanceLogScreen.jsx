@@ -18,13 +18,11 @@ export default function MaintenanceLogScreen({ route, navigation }){
     useEffect(() => {
         let mli = new MaintenanceLogInfo()
         mli.load(item.data.maintenance_log_info_id).then(() => {
-            console.log('mli.data:', mli.data)
             setMaintenanceInfo(mli.data.maintenance_log_info)
         })
 
         let eq = new Equipment()
         eq.load(item.data.equipment_id).then(() => {
-            console.log('eq.data:', eq.data)
             setEquipment(eq)
         })
     }, [])
