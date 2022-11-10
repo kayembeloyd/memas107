@@ -15,7 +15,7 @@ export default function HomeScreen({ navigation }){
             <View style={styles.containerHomeHeader}>
                 <View style={styles.homeHeader}>
                     <Text style={styles.homeHeaderText}>MEMAS107</Text>
-                    <Ionicons name="settings-outline" size={32} color="black" />
+                    <Ionicons name="settings-outline" size={28} color="black" />
                 </View>
             </View>
 
@@ -53,7 +53,7 @@ export default function HomeScreen({ navigation }){
                     </CCard>
                 </View>
 
-                <View style={{ height: 90, backgroundColor:'red' }}></View>
+                <View style={{ height: 90 }}></View>
             </ScrollView>
 
             <CScanButton onPress={() => {
@@ -66,29 +66,24 @@ export default function HomeScreen({ navigation }){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'blue',
+        backgroundColor: 'white',
     },
 
     containerHomeHeader: {
-        backgroundColor:'yellow',
         justifyContent: 'center',
         alignContent: 'center',
         paddingHorizontal: 20,
     },
 
     homeHeader: {
-        marginTop: 58,
+        marginTop: 35,
         width: '100%',
-        maxWidth: 500,
         flexDirection: 'row',
-        backgroundColor: 'brown',
         alignItems: 'center',
-        maxWidth: 600,
         alignSelf:'center',
     },
 
     homeHeaderText: {
-        backgroundColor: 'green',
         fontSize: 20,
         fontWeight: '400',
         fontFamily: 'Roboto',
@@ -96,7 +91,6 @@ const styles = StyleSheet.create({
     },
 
     containerProfile: {
-        backgroundColor: 'violet',
         marginTop: 30,
         paddingHorizontal: 20,
         flexDirection: 'row',
@@ -120,11 +114,10 @@ const styles = StyleSheet.create({
     },
 
     profileInfoPosition:{
-        color:'grey'
+        color: '#737373'
     },
 
     cardsContainer: {
-        backgroundColor: 'gold',
         justifyContent: 'center', 
         flexDirection:'row', 
         flexWrap: 'wrap',

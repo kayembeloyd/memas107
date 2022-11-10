@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'green',
-        marginTop: 36,
+        marginTop: 0,
     }, 
 
     searchBarContainer: {

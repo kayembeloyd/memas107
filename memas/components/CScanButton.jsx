@@ -1,12 +1,20 @@
 import React from "react";
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 
 export default function CScanButton(props) {
     return (
         <View style={ [styles.scanButtonContainer, {...props.style}] }>
             <TouchableOpacity onPress={ props.onPress }>
-                <Image source={require('../assets/sample-qr-code.png')}
-                    style={[styles.profileImage, {borderColor:'black',borderWidth: 5, width: 60, height: 60}]} />
+                <View style={{borderRadius: 30, elevation: 3, backgroundColor: '#D9D9D9', shadowColor: '#000',}}>
+                    <Image source={require('../assets/scan-button-image.png')}
+                        style={[styles.profileImage, {
+                            borderWidth: 1,
+                            borderColor: '#C0C0C0',
+                            backgroundColor: '#D9D9D9',
+                            width: 60, 
+                            height: 60,}]} />
+                </View>
+                
             </TouchableOpacity>
         </View>
     );
@@ -25,7 +33,6 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         alignItems:'flex-end',
-        backgroundColor: 'indigo',
         marginRight: 30,
         marginEnd: 30,
         marginBottom: 30,

@@ -16,7 +16,7 @@ export default function CCard(props) {
 const styles = StyleSheet.create({
     container: {
         minWidth:300,
-        backgroundColor: 'green',
+        backgroundColor: '#EFEFEF',
         padding: 20,
     },
 
