@@ -28,7 +28,7 @@ export default class MiddleMan {
             }
 
             let lastEID = await LocalDatabase.getItem('last_e_id')
-
+            lastEID ? 0 : lastEID = 0
             iStart++
 
             if (iStart > Number.parseInt(lastEID)) {

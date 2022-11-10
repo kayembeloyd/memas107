@@ -1,23 +1,22 @@
 import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
-export default function CEquipmentItem ({ name, department, make, model, 
-    tag, status, onPress }) {
+export default function CEquipmentItem (props) {
     
     return (
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity onPress={props.onPress}>
             <View style={styles.container}> 
                 <View style={{ marginLeft:5 }}>
                     <View style={{ flexDirection: 'row', paddingBottom: 5, }}>
-                        <Text style={styles.equipmentHeaderText}>M001-PC1</Text>
+                        <Text style={styles.equipmentHeaderText}>{props.asset_tag}</Text>
                         <Text>Working</Text>
                     </View>
 
                     <Text style={{color:'#444444', fontSize: 18, fontWeight: '700',}}>
-                        Oxygen Concentrator</Text>
-                    <Text style={styles.equipmentDesc}>Maternity</Text>
-                    <Text style={styles.equipmentDesc}>Canta</Text>
-                    <Text style={styles.equipmentDesc}>VN-WS-08</Text>
+                        {props.name}</Text>
+                    <Text style={styles.equipmentDesc}>Department: {props.department}</Text>
+                    <Text style={styles.equipmentDesc}>Make: {props.make}</Text>
+                    <Text style={styles.equipmentDesc}>Model: {props.model}</Text>
                 </View>
             </View>
         </TouchableOpacity>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, ScrollView, FlatList, Image, Modal, Text, TouchableOpacity } from 'react-native';
 
 import CSearchBar from '../components/CSearchBar';
@@ -8,11 +8,11 @@ import CEquipmentItem from '../components/CEquipmentItem'
 import CScanButton from '../components/CScanButton';
 import CButton from '../components/CButton';
 import CListModal from '../components/CListModal';
+import Equipment from '../database/models/Equipment';
 
 export default function EquipmentsScreen({ navigation }){
 
-    const [equipments, setEquipments] = useState([
-        {id: 1}, {id: 2}, {id: 3}, {id: 4}, {id: 5}, {id: 6}, {id: 7}, {id: 8}, {id: 9}, {id: 10}, {id: 11}])
+    const [equipments, setEquipments] = useState([])
     
     // For the FilterBar
     const [departments, setDepartments] = useState([
@@ -74,7 +74,36 @@ export default function EquipmentsScreen({ navigation }){
             default:
                 break;
         }
-    } 
+    }
+
+    const [iMore, setIMore] = useState(true)
+    const [iLastIndex, setILastIndex] = useState(0)    
+    const loadEquipments = () => {
+        if (iMore){
+            Equipment.getEquipments(iLastIndex, 7).then((results) => {
+                const eqs = results.data
+
+                setEquipments((prevEquipments) => {
+                    prevEquipments.push(...eqs)
+                    return prevEquipments
+                })
+
+                results.meta.lastIndex ? setILastIndex(results.meta.lastIndex) : setILastIndex(0)
+                setIMore(results.meta.more)
+            })
+        } else {
+            // No more
+        }
+    }
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            setEquipments([])
+            loadEquipments()
+        });
+
+        return unsubscribe;
+    }, [ navigation ]);
 
     return (
         <View style={styles.container}>
@@ -129,13 +158,16 @@ export default function EquipmentsScreen({ navigation }){
                         </View>
                     )
                 }}
+                onEndReached={() => {
+                    console.log('end reached')
+                }}
                 stickyHeaderIndices={[0]}
                 stickyHeaderHiddenOnScroll={true}
                 data={equipments}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.data.e_id}
                 renderItem={({ item }) => (
-                    <CEquipmentItem name={item.name} department='department' 
-                        model='model' make='make' tag='asset-tag' status='To be determined'
+                    <CEquipmentItem name={item.data.name} department={item.data.department} 
+                        model={item.data.model} make={item.data.make} asset_tag={item.data.asset_tag} status='To be determined'
                         onPress={() => {
                             navigation.navigate('Equipment', { item })
                         }} />

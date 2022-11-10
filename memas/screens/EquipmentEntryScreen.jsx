@@ -187,14 +187,12 @@ export default function EquipmentEntryScreen({ navigation }){
                 </CCard>
 
                 <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={true} title='Technical specifications'>
-                    {
-                        technicalSpecifications.map((element) => {
-                            return (
-                                <Text key={element.id} style={ styles.infoText }>{element.tsKey}: <Text style={ styles.infoValueText }>{element.tsValue}</Text>
-                                </Text>
-                            )
-                        })
-                    }
+                    {technicalSpecifications.map((element) => {
+                        return (
+                            <Text key={element.id} style={ styles.infoText }>{element.tsKey}: <Text style={ styles.infoValueText }>{element.tsValue}</Text>
+                            </Text>
+                        )
+                    })}
                     
                     <CButton text='Add technical specification' onPress={() => {
                         setAddTechnicalSpecificationModalVisibility(true)
@@ -210,7 +208,8 @@ export default function EquipmentEntryScreen({ navigation }){
                             const eq = new Equipment()
                             eq.data = equipmentData
                             eq.save().then((new_e_id) => {
-                                alert('Equipment saved')
+                                alert('Equipment saved ID: e_id' + new_e_id)
+                                setEquipmentData([])
                                 navigation.goBack()
                             })
                         })
