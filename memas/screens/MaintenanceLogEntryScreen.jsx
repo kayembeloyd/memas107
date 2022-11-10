@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 
+import MaintenanceLog from '../database/models/MaintenanceLog'
+import MaintenanceLogInfo from '../database/models/MaintenanceLogInfo'
+
 import CToolbar from '../components/CToolbar';
 import CCard from '../components/CCard';
 import CTextInput from '../components/CTextInput';
@@ -9,23 +12,26 @@ import CCustomModal from '../components/CCustomModal';
 
 export default function MaintenanceLogEntryScreen({ route, navigation }){
 
+    const [maintenanceData, setMaintenanceData] = useState({}) 
+
+    const [mliKeyInEdit, setMliKeyInEdit] = useState('')
+    const [mliValueInEdit, setMliValueInEdit] = useState('')
+
     const {item, maintenanceType} = route.params;
 
-    const [maintenanceInfo, setMaintenanceInfo] = useState([
-        {id: 1, miKey: 'maintenace info 1', miValue: 'maintenance value'},
-        {id: 2, miKey: 'maintenace info 2', miValue: 'maintenance value'},
-        {id: 3, miKey: 'maintenace info 3', miValue: 'maintenance value'},
-        {id: 4, miKey: 'maintenace info 4', miValue: 'maintenance value'},
-    ])
+    const [maintenanceInfo, setMaintenanceInfo] = useState([])
 
     const [addMaintenanceInfoModalVisibility, setAddMaintenanceInfoModalVisibility] = useState(false)
 
     useEffect(() => {
+        setMaintenanceData((prevMaintenanceData) => {
+            prevMaintenanceData.type = maintenanceType
+            return prevMaintenanceData
+        })
     })
 
     return (
         <View style={styles.container}>
-
             <CCustomModal visible={addMaintenanceInfoModalVisibility}
                 actionButtonsComponent={() => {
                     return (
@@ -36,13 +42,26 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                                 }}/>
                             <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save'
                                 onPress={() => {
+                                    setMaintenanceInfo((prevMaintenanceInfo) => {
+                                        let last = 0
+                                        if (prevMaintenanceInfo.length >= 1){
+                                            last = prevMaintenanceInfo[prevMaintenanceInfo.length - 1].id
+                                        }
+                                        prevMaintenanceInfo.push({id: (last + 1), mliKey: mliKeyInEdit, mliValue: mliValueInEdit})
+                                        return prevMaintenanceInfo
+                                    })
+
                                     setAddMaintenanceInfoModalVisibility(false)
                                 }}/>
                         </View>
                     )}}>
                     <Text style={{ marginLeft: 10, marginTop: 10, marginBottom: 10, fontWeight: '500'}}>Add Maintenance Info</Text>
-                    <CTextInput hint='Maintenance info name'/>
-                    <CTextInput style={{ marginBottom: 10, }} hint='Maintenance info name'/>
+                    <CTextInput hint='Maintenance info name' onChangeText={(t) => {
+                        setMliKeyInEdit(t)
+                    }}/>
+                    <CTextInput style={{ marginBottom: 10, }} hint='Maintenance info value' onChangeText={(t) => {
+                        setMliValueInEdit(t)
+                    }}/>
             </CCustomModal>
 
             <ScrollView stickyHeaderIndices={[0]} >
@@ -52,22 +71,28 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                 </View>
 
                 <View style={{ margin: 10, backgroundColor: 'gold' }}>
-                    <Text style={{fontWeight: '500', fontSize: 22, marginBottom: 30}}>Date: 06/11/2022 </Text>
-                    <Text style={{fontWeight: '500', fontSize: 20,}}>Equipment {item.id}</Text>
-                    <Text style={styles.attentionText}>Maintenance Type: {maintenanceType} </Text>
-                    <Text style={styles.attentionText}>Serial: props.equipment.serial_number </Text>
-                    <Text style={styles.noneAttentionText}>Make: props.equipment.make </Text>
-                    <Text style={styles.noneAttentionText}>Model: props.equipment.model </Text>
-                    <Text style={styles.noneAttentionText}>Dept: props.equipment.department </Text>
+                    <Text style={{fontWeight: '500', fontSize: 22, marginBottom: 30}}>Date: 06/11/2022</Text>
+                    <Text style={{fontWeight: '500', fontSize: 22,}}>{ item.data.name }</Text>
+                    <Text style={styles.attentionText}>{maintenanceType} </Text>
+                    <Text style={styles.noneAttentionText}>SN: {item.data.serial_number}</Text>
+                    <Text style={styles.noneAttentionText}>Make: {item.data.make}</Text>
+                    <Text style={styles.noneAttentionText}>Model: {item.data.model}</Text>
+                    <Text style={styles.noneAttentionText}>Dept: {item.data.department}</Text>
 
-                    <CTextInput style={{width: '100%', alignSelf:'flex-start', maxWidth: 700,}} hint='Maintenance description'/>
+                    <CTextInput style={{width: '100%', alignSelf:'center', maxWidth: 700,}} 
+                        hint='Maintenance description' onChangeText={(t) => {
+                            setMaintenanceData((prevMaintenanceData) => {
+                                prevMaintenanceData.description = t
+                                return prevMaintenanceData
+                            })
+                        }}/>
                 </View>
 
                 <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={true} title='Other info' >
                     {
                         maintenanceInfo.map((element) => {
                             return (
-                                <Text key={element.id} style={ styles.infoText }>{element.miKey}: <Text style={ styles.infoValueText }>{element.miValue}</Text>
+                                <Text key={element.id} style={ styles.infoText }>{element.mliKey}: <Text style={ styles.infoValueText }>{element.mliValue}</Text>
                                 </Text>
                             )
                         })
@@ -77,6 +102,24 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                         setAddMaintenanceInfoModalVisibility(true)
                     }}/>
                 </CCard>
+
+                <View style={{alignItems: 'center'}}>
+                    <CButton style= {{ marginVertical: 20, marginHorizontal: 20, width: '100%', maxWidth: 500 }} text="Done"
+                        onPress={() => {
+                            const mli = new MaintenanceLogInfo()
+                            mli.data.maintenance_log_info = maintenanceInfo
+                            mli.save().then((new_mli_id) => {
+                                maintenanceData.maintenance_log_info_id = new_mli_id
+                                const ml = new MaintenanceLog()
+                                ml.data = maintenanceData
+                                ml.save().then((new_ml_id) => {
+                                    alert('Maintenance Log saved ID: ml_id' + new_ml_id)
+                                    setMaintenanceData({})
+                                    navigation.goBack()
+                                })
+                            })
+                        }} />
+                </View>
             </ScrollView>
         </View>
     )

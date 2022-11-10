@@ -171,4 +171,35 @@ export default class MiddleMan {
 
         return newMLID
     }
+
+    // For maintenance log info
+    static async getMaintenanceLogInfo(mli_id){
+        return JSON.parse(
+            await LocalDatabase.getItem('mli_id' + mli_id)
+        )
+    }
+
+    static async saveMaintenanceLogInfo(maintenanceLogInfoData){
+        if (maintenanceLogInfoData.mli_id){
+            if (await this.getEquipment(maintenanceLogInfoData.mli_id)){
+                await LocalDatabase.setItem('mli_id' + maintenanceLogInfoData.mli_id, `${JSON.stringify(maintenanceLogInfoData)}`)
+                return maintenanceLogInfoData.mli_id
+            }
+
+            return undefined
+        }
+        
+        
+        let lastMLIID = await LocalDatabase.getItem('last_mli_id')
+        let newMLIID = 0
+
+        lastMLIID ? newMLIID = Number.parseInt(lastMLIID) + 1 : newMLIID = 1
+
+        maintenanceLogInfoData.mli_id = newMLIID
+        
+        await LocalDatabase.setItem('last_mli_id', `${newMLIID}`)
+        await LocalDatabase.setItem('mli_id' + `${newMLIID}`, JSON.stringify(maintenanceLogInfoData))
+
+        return newMLIID
+    }
 }

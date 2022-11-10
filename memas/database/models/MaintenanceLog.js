@@ -1,3 +1,5 @@
+import MiddleMan from "../MiddleMan"
+
 export default class MaintenanceLog {
     constructor(){
         this.data = {}
