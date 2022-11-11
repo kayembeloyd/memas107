@@ -1,7 +1,7 @@
 # memas107
 ## Medical Equipment Management Software (v107)
 
-MEMAS is a management software developed by Lloyd Kayembe, a skilled biomedical engineer in Malawi. 
+MEMAS is a management software developed by Lloyd Kayembe (Biomedical Engineer, Malawi). 
 
 ### Features 
 
