@@ -61,11 +61,11 @@ export default function EquipmentsScreen({ navigation }){
     const [iIsLoading, setIIsLoading] = useState(false)
     const [iMore, setIMore] = useState(true)
     const [iLastIndex, setILastIndex] = useState(0)    
-    const loadEquipments = () => {
+    const loadEquipments = (filterOptions) => {
         if (iMore){
             setIIsLoading(true)
 
-            Equipment.getEquipments(iLastIndex + 1, 5).then((results) => {
+            Equipment.getEquipments(iLastIndex + 1, 10).then((results) => {
                 setIIsLoading(false)
 
                 const eqs = results.data
@@ -82,16 +82,24 @@ export default function EquipmentsScreen({ navigation }){
         }
     }
 
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => { 
-            Department.getDepartments({with_all: true}).then((dpt) => {
-                setDepartments(dpt)
-            })
-            setEquipments([])
-            loadEquipments()
+    useEffect(() => {        
+        console.log('EquipmentScreen.useEffect()')
+
+        setEquipments([])
+        
+        loadEquipments()
+
+        Department.getDepartments({with_all: true}).then((dpt) => {
+            setDepartments(dpt)
+        })
+    
+        const unsubscribe = navigation.addListener('focus', () => {
+            // EquipmentScreen Focused
+            // Load filter
         });
 
         return unsubscribe;
+    
     }, [ navigation ]);
 
     return (
@@ -163,7 +171,8 @@ export default function EquipmentsScreen({ navigation }){
                 keyExtractor={(item) => item.data.e_id}
                 renderItem={({ item }) => (
                     <CEquipmentItem name={item.data.name} department={item.data.department} 
-                        model={item.data.model} make={item.data.make} asset_tag={item.data.asset_tag} status='not set'
+                        model={item.data.model} make={item.data.make} asset_tag={item.data.asset_tag} 
+                        status={item.data.status ? item.data.status : 'not set'}
                         onPress={() => {
                             navigation.navigate('Equipment', { item })
                         }} />

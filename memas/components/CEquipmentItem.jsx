@@ -9,7 +9,7 @@ export default function CEquipmentItem (props) {
                 <View style={{ marginLeft:5 }}>
                     <View style={{ flexDirection: 'row', }}>
                         <Text style={styles.equipmentHeaderText}>{props.asset_tag}</Text>
-                        <Text>Working</Text>
+                        <Text>{props.status}</Text>
                     </View>
 
                     <Text style={{fontSize: 20, fontWeight: '700', paddingBottom: 5,}}>
