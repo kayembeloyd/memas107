@@ -14,6 +14,7 @@ import Department from '../database/models/Department';
 export default function EquipmentsScreen({ navigation }){
 
     const [equipments, setEquipments] = useState([])
+    const [equipmentFilterOptions, setEquipmentFilterOptions] = useState({department:'Department 2'})
     
     // For the FilterBar
     const [departments, setDepartments] = useState([])
@@ -61,11 +62,11 @@ export default function EquipmentsScreen({ navigation }){
     const [iIsLoading, setIIsLoading] = useState(false)
     const [iMore, setIMore] = useState(true)
     const [iLastIndex, setILastIndex] = useState(0)    
-    const loadEquipments = (filterOptions) => {
+    const loadEquipments = () => {
         if (iMore){
             setIIsLoading(true)
 
-            Equipment.getEquipments(iLastIndex + 1, 10).then((results) => {
+            Equipment.getEquipments(iLastIndex + 1, 10, equipmentFilterOptions).then((results) => {
                 setIIsLoading(false)
 
                 const eqs = results.data
@@ -85,22 +86,22 @@ export default function EquipmentsScreen({ navigation }){
     useEffect(() => {        
         console.log('EquipmentScreen.useEffect()')
 
-        setEquipments([])
-        
-        loadEquipments()
-
         Department.getDepartments({with_all: true}).then((dpt) => {
             setDepartments(dpt)
         })
     
+        setEquipments([])
+            
+        loadEquipments()
+
         const unsubscribe = navigation.addListener('focus', () => {
             // EquipmentScreen Focused
-            // Load filter
+            // Load filter            
         });
 
         return unsubscribe;
     
-    }, [ navigation ]);
+    }, [ navigation, equipmentFilterOptions ]);
 
     return (
         <View style={styles.container}>

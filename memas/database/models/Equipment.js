@@ -13,7 +13,7 @@ export default class Equipment {
         return this.data.e_id
     }
 
-    static async getEquipments(lastIndex, size){
-        return await MiddleMan.getEquipments(lastIndex, size)
+    static async getEquipments(lastIndex, size, equipmentFilterOptions){
+        return await MiddleMan.getEquipments(lastIndex, size, equipmentFilterOptions)
     }
 }

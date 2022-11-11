@@ -3,6 +3,12 @@ import LocalDatabase from "./LocalDatabase"
 export default class MiddleMan {
     static API_ADDRESS = 'localhost/memas107'
 
+    // Simple equality filter test
+    static seft(model_property, filter_property){
+        if (filter_property === 'All') return true
+        return (model_property === filter_property)
+    }
+
     // For equipments
     static async getEquipment(e_id){
         return JSON.parse(
@@ -10,7 +16,7 @@ export default class MiddleMan {
         )
     }
 
-    static async getEquipments(lastIndex, size){
+    static async getEquipments(lastIndex, size, equipmentFilterOptions){
         let iStart = lastIndex
         let iSize = size
 
@@ -23,8 +29,21 @@ export default class MiddleMan {
             eq.data = await this.getEquipment(iStart)
 
             if (eq.data){
-                equipments.push(eq)
-                iCount++
+                if (equipmentFilterOptions){
+                    // Department Filter
+                    let departmentFilterTestResult = equipmentFilterOptions.department ? this.seft(eq.data.department, equipmentFilterOptions.department) : true
+                    
+                    // Status Filter
+                    let statusFilterTestResult = equipmentFilterOptions.status ? this.seft(eq.data.status, equipmentFilterOptions.status) : true 
+                
+                    if (departmentFilterTestResult && statusFilterTestResult){
+                        equipments.push(eq)
+                        iCount++                        
+                    }
+                } else {
+                    equipments.push(eq)
+                    iCount++                    
+                }
             }
 
             let lastEID = await LocalDatabase.getItem('last_e_id')
