@@ -8,6 +8,7 @@ import CListModal from '../components/CListModal';
 import CMaintenanceLogItem from '../components/CMaintenanceLogItem';
 import MaintenanceLog from '../database/models/MaintenanceLog';
 import Department from '../database/models/Department';
+import CButton from '../components/CButton';
 
 export default function MaintenanceLogs({ route, navigation }){
 
@@ -128,12 +129,23 @@ export default function MaintenanceLogs({ route, navigation }){
                         </View>
                     )
                 }}
+                ListFooterComponent= { () => {
+                    return (
+                        <View style={{alignItems: 'center'}}>
+                            {
+                                iMore ? <CButton  style={{ marginVertical: 20, width:'100%', maxWidth: 300}} text={'Load more'} onPress={() => {
+                                    loadMaintenanceLogs()
+                                }}/> : iIsLoading ? <CButton  style={{ marginVertical: 20, width:'100%', maxWidth: 300}} text={'Loading...'} /> : <></>
+                            }
+                        </View>
+                    )
+                }}
                 stickyHeaderIndices={[0]}
                 stickyHeaderHiddenOnScroll={true}
                 data={maintenanceLogs}
                 keyExtractor={(item) => item.data.ml_id}
                 renderItem={({ item }) => (
-                    <CMaintenanceLogItem equipment_id={item.data.equipment_id} type={item.data.type} date={item.data.date} onPress={() => {
+                    <CMaintenanceLogItem equipment_id={item.data.equipment_id} log_id={item.data.ml_id} type={item.data.type} date={item.data.date} onPress={() => {
                         navigation.navigate('MaintenanceLog',  { item })
                     }}/>
                 )}

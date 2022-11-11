@@ -19,7 +19,7 @@ export default function CMaintenanceLogItem (props) {
             <View style={styles.container}> 
                 <View style={{ marginLeft:5 }}>
                     <Text style={{ fontSize: 20, fontWeight: '700',}}>
-                        {equipment.data.name} </Text>
+                        {equipment.data.name} <Text style={{fontSize:16, fontWeight: '300'}}>(log No.{props.log_id})</Text> </Text>
                     <Text style={styles.attentionText}>Maintenance Type: {props.type} </Text>
                     <Text style={styles.attentionText}>Date: {props.date} </Text>
                     <Text style={styles.attentionText}>Serial: {equipment.data.serial_number} </Text>
