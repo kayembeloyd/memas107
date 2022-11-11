@@ -22,15 +22,14 @@ export default function CToolbar(props) {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor:'green',
+        backgroundColor:'white',
         flexDirection: 'row',
         paddingHorizontal: 10,
-        height: 48,
+        height: 53,
         alignItems:'center'
     },
 
     titleContainer:{
-        backgroundColor: 'red',
         flex: 1,
         height: '100%',
         justifyContent: 'center',

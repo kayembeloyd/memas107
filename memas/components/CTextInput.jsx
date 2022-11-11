@@ -5,21 +5,21 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function CTextInput(props) {
     return (
-        <View style={[{backgroundColor:'indigo', flexDirection: 'row'}, {...props.style}]}>
+        <View style={[{ flexDirection: 'row'}, {...props.style}]}>
             <View style= {{ margin: 10, flex: 1}}>
                 <Text style={{ margin: 5, paddingLeft: 10, }}>{props.hint}</Text>
 
                 <View style={{ flexDirection: 'row'}}>
                     {props.isFrozen ? (
                         <TouchableOpacity style={{ flex: 1 }} onPress={props.onFrozenPress}>
-                            <View style={{ flex: 1, paddingHorizontal: 20, paddingVertical: 15, backgroundColor:'cyan', 
+                            <View style={{ flex: 1, paddingHorizontal: 20, paddingVertical: 15, backgroundColor:'#E8E8E8', 
                                 height: 53, borderRadius: 10, justifyContent: 'center'}}>
                                     <Text style={{fontSize: 18, fontWeight: '400', fontFamily: 'Roboto',}}>{props.ivalue}</Text>
                             </View>
                         </TouchableOpacity>
                         ) : (
                         <TextInput style={{ borderWidth: 0, flex: 1, paddingHorizontal: 20, outlineWidth:0,
-                            fontSize: 18, fontWeight: '400', fontFamily: 'Roboto', backgroundColor:'cyan', 
+                            fontSize: 18, fontWeight: '400', fontFamily: 'Roboto', backgroundColor:'#E8E8E8', 
                             height: 53, borderRadius: 10,}} onChangeText={props.onChangeText}/>
                     )}
                     

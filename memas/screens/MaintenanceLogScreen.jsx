@@ -29,13 +29,13 @@ export default function MaintenanceLogScreen({ route, navigation }){
 
     return (
         <View style={styles.container}>
-            <ScrollView stickyHeaderIndices={[0]} >
-                <View style={ styles.searchBarContainer }>
+            <ScrollView>
+                {/*<View style={ styles.searchBarContainer }>
                     <CToolbar style={{ width: '100%', maxWidth: 700 }} text={ 'Maintenance Log' }
                         onBackPress={() => navigation.goBack()}/>
-                </View>
+                </View>*/}
 
-                <View style={{ margin: 10, backgroundColor: 'gold' }}>
+                <View style={{ margin: 10, backgroundColor: '#FAFAFA', paddingLeft: 10, borderRadius: 5, }}>
                     <Text style={{fontWeight: '500', fontSize: 22, marginBottom: 30}}>Date: { item.data.date }</Text>
                     <Text style={{fontWeight: '500', fontSize: 20,}}>{equipment.data.name}</Text>
                     <Text style={styles.attentionText}>Maintenance Type: {item.data.type}</Text>
@@ -48,7 +48,7 @@ export default function MaintenanceLogScreen({ route, navigation }){
                     <Text style={{fontWeight: '300', fontSize: 18,}}>{ item.data.description }</Text>
                 </View>
                 
-                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={true} title='Other info' >    
+                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, marginTop: 20}} titleShown={true} title='Other info' >    
                     {
                         maintenanceInfo.map((element) => {
                             return (
@@ -66,12 +66,11 @@ export default function MaintenanceLogScreen({ route, navigation }){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'green',
+        backgroundColor: 'white',
         marginTop: 0,
     }, 
 
     searchBarContainer: {
-        backgroundColor: 'gold',
         flexDirection: 'row',
         justifyContent: 'center',
         alignContent: 'center',

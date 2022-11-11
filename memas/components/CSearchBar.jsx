@@ -26,7 +26,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         height: 48,
         alignItems:'center',
-        marginVertical: 5
+        marginVertical: 5,
+        elevation: 2,
     },
 
     input:{

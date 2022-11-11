@@ -7,6 +7,7 @@ import CFilterItem from '../components/CFilterItem';
 import CListModal from '../components/CListModal';
 import CMaintenanceLogItem from '../components/CMaintenanceLogItem';
 import MaintenanceLog from '../database/models/MaintenanceLog';
+import Department from '../database/models/Department';
 
 export default function MaintenanceLogs({ route, navigation }){
 
@@ -15,26 +16,7 @@ export default function MaintenanceLogs({ route, navigation }){
     const [maintenanceLogs, setMaintenanceLogs] = useState([])
     
     // For the FilterBar
-    const [departments, setDepartments] = useState([
-        {id: 0, name:'All'}, 
-        {id: 1, name:'Department 1'}, 
-        {id: 2, name:'Department 2'}, 
-        {id: 3, name:'Department 3'}, 
-        {id: 4, name:'Department 4'}, 
-        {id: 5, name:'Department 5'}, 
-        {id: 6, name:'Department 6'}, 
-        {id: 7, name:'Department 7'}, 
-        {id: 8, name:'Department 8'}, 
-        {id: 9, name:'Department 9'},
-        {id: 10, name:'Department 10'}, 
-        {id: 11, name:'Department 11'}, 
-        {id: 12, name:'Department 12'}, 
-        {id: 13, name:'Department 13'}, 
-        {id: 14, name:'Department 14'}, 
-        {id: 15, name:'Department 15'}, 
-        {id: 16, name:'Department 16'}, 
-        {id: 17, name:'Department 17'}, 
-    ])
+    const [departments, setDepartments] = useState([])
     const [selectedDepartment, setSelectedDepartment] = useState('All')
 
     const [maintenanceTypes, setMaintenanceTypes] = useState([
@@ -52,7 +34,7 @@ export default function MaintenanceLogs({ route, navigation }){
             case 'Department':
                 setSelectDepartmentModalVisibility(true)
                 break;
-            case 'MaintenanceType':
+            case 'Maint... Type':
                 setSelectMaintenanceTypeModalVisibility(true)
                 break;
             default:
@@ -89,6 +71,10 @@ export default function MaintenanceLogs({ route, navigation }){
         }
 
         const unsubscribe = navigation.addListener('focus', () => { 
+            Department.getDepartments({with_all: true}).then((dpts) => {
+                setDepartments(dpts)
+            })
+
             setMaintenanceLogs([])
             loadMaintenanceLogs()
         });
@@ -119,7 +105,7 @@ export default function MaintenanceLogs({ route, navigation }){
 
             <FlatList ListHeaderComponent = {() => {
                     return (
-                        <View style={{ backgroundColor: 'black'}}>
+                        <View style={{ backgroundColor: 'white'}}>
                             <View style={ styles.searchBarContainer }>
                                 <CSearchBar 
                                     style={{ width: '100%', maxWidth: 700 }} 
@@ -134,7 +120,7 @@ export default function MaintenanceLogs({ route, navigation }){
                                         filterItemPress={(fkey) => filterItemPressHandler(fkey)} />
                                     )}
                                     
-                                    <CFilterItem style={{ marginRight: 20}} filterKey='MaintenanceType' filterValue={selectedMaintenanceType} 
+                                    <CFilterItem style={{ marginRight: 20}} filterKey='Maint... Type' filterValue={selectedMaintenanceType} 
                                         filterItemPress={(fkey) => filterItemPressHandler(fkey)}/>
                                     
                                 </CFilterBar>
@@ -164,7 +150,6 @@ const styles = StyleSheet.create({
     },
 
     searchBarContainer: {
-        backgroundColor: 'gold',
         flexDirection: 'row',
         justifyContent: 'center',
         alignContent: 'center',

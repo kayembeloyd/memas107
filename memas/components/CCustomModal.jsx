@@ -3,8 +3,8 @@ import { StyleSheet, View, Modal, ScrollView } from "react-native";
 
 export default function CCustomModal(props) {
     return (
-        <Modal visible={props.visible} animationType={'slide'} transparent={true}>
-            <View style={{backgroundColor: 'rgba(0,0,0,0.4)', 
+        <Modal visible={props.visible} animationType='fade' transparent={true}>
+            <View style={{backgroundColor: 'rgba(0,0,0,0.7)', 
                 flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20,}}>
 
                 <View style={{ width: '100%', backgroundColor: 'white', borderRadius: 10, 

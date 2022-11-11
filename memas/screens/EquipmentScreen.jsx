@@ -42,8 +42,13 @@ export default function EquipmentScreen({ route, navigation }){
 
             setEquipmentStatus(item.data.status ? item.data.status : '(not set)')
             setNextServiceDate(item.data.next_service_date ? item.data.next_service_date : '(not set)')
+
+            navigation.setOptions({
+                headerTitle: item.data.name,
+            })
         });
 
+        return unsubscribe;
     }, [navigation])
 
     return (
@@ -70,12 +75,12 @@ export default function EquipmentScreen({ route, navigation }){
                         </View>
                     )}}>
 
-                <Text style={{ marginLeft: 10, marginTop: 10}}>Click to change</Text>
+                <Text style={{ fontSize: 16, fontWeight: '500', marginLeft: 10, marginTop: 10}}>Click to change</Text>
                 <TouchableOpacity onPress={() => {
                         currentStatusIndex + 1 > 2 ? setCurrentStatusIndex(0) : setCurrentStatusIndex(currentStatusIndex + 1)
                     }}>
 
-                    <View style={{ margin:10, paddingVertical: 15, backgroundColor:'red'}}>
+                    <View style={{ margin:10, paddingVertical: 15, backgroundColor:'#D9D9D9', borderRadius: 5}}>
                         <Text style={{paddingHorizontal: 10, fontSize: 18, fontWeight: '400'}}>{ statuses[currentStatusIndex].name}</Text>
                     </View>
                 </TouchableOpacity>
@@ -113,13 +118,13 @@ export default function EquipmentScreen({ route, navigation }){
 
             </CCustomModal>
 
-            <ScrollView stickyHeaderIndices={[0]} >
-                <View style={ styles.searchBarContainer }>
+            <ScrollView>
+                {/*<View style={ styles.searchBarContainer }>
                     <CToolbar style={{ width: '100%', maxWidth: 700 }} text={ item.data.name }
                         onBackPress={() => navigation.goBack()}/>
-                </View>
+                </View>*/}
 
-                <CCard style={{ backgroundColor: 'purple' }} titleShown={true} title='General Info'>
+                <CCard style={{ marginTop: 10, }} titleShown={true} title='General Info'>
                     <Text style={ styles.infoText }>Name: <Text style={ styles.infoValueText }>{item.data.name}</Text>
                     </Text>
 
@@ -136,7 +141,7 @@ export default function EquipmentScreen({ route, navigation }){
                     </Text>
                 </CCard>
 
-                <CCard style={{ backgroundColor: 'blue', marginTop: 20}} titleShown={false}>
+                <CCard style={{ marginTop: 20}} titleShown={false}>
                     
                     <Text style={ styles.infoText }>Equipment status: <Text style={ styles.infoValueText }>{equipmentStatus}</Text>
                     </Text>
@@ -149,16 +154,16 @@ export default function EquipmentScreen({ route, navigation }){
 
                 </CCard>
 
-                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={false}>
+                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, marginTop: 20}} titleShown={false}>
                     <CButton style={ styles.buttonsAdditionalStyles} text='Maintenance Logs' onPress={() => {
                         navigation.navigate('MaintenanceLogs', { filtering: 'on', filterEquipment: item })
                     }}/>
 
-                    <CButton style={ styles.buttonsAdditionalStyles} backgroundColor='green' text='Corrective Maintenance'
+                    <CButton style={ styles.buttonsAdditionalStyles} backgroundColor='#CCCCCC' text='Corrective Maintenance'
                         onPress={() => {
                             navigation.navigate('MaintenanceLogEntry', {item: item, maintenanceType: 'Corrective Maintenance'})
                         }}/>
-                    <CButton style={ styles.buttonsAdditionalStyles} backgroundColor='green' text='Preventive Maitenance'
+                    <CButton style={ styles.buttonsAdditionalStyles} backgroundColor='#CCCCCC' text='Preventive Maitenance'
                         onPress={() => {
                             navigation.navigate('MaintenanceLogEntry', {item: item, maintenanceType: 'Preventive Maintenance'})
                         }}/>
@@ -172,7 +177,7 @@ export default function EquipmentScreen({ route, navigation }){
                     }}/>
                 </CCard>
 
-                <CCard style={{ backgroundColor: 'purple',  marginTop: 20}} titleShown={true} title='Technical Specification'>
+                <CCard style={{ marginTop: 20}} titleShown={true} title='Technical Specification'>
                     {
                         technicalSpecification.map((element) => {
                             return (
@@ -183,7 +188,7 @@ export default function EquipmentScreen({ route, navigation }){
                     }
                 </CCard>
 
-                <CCard style={{ backgroundColor: 'purple',  marginTop: 20}} titleShown={true} title='Other Info'>
+                <CCard style={{ marginTop: 20}} titleShown={true} title='Other Info'>
                     <Text style={ styles.infoText }>Supplied by: <Text style={ styles.infoValueText }>{item.data.supplied_by}</Text>
                     </Text>
 
@@ -198,12 +203,11 @@ export default function EquipmentScreen({ route, navigation }){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'green',
+        backgroundColor: 'white',
         marginTop: 0,
     }, 
 
     searchBarContainer: {
-        backgroundColor: 'gold',
         flexDirection: 'row',
         justifyContent: 'center',
         alignContent: 'center',

@@ -32,8 +32,9 @@ export default function MainNavigationStack({ navigation }) {
                 component={ EquipmentEntryScreen }
                 options={ ({ navigation }) => {
                     return {
-                        headerShown: false,
-                        headerShadowVisible: false,
+                        headerShown: true,
+                        headerShadowVisible: true,
+                        headerTitle: 'Add Equipment',
                     }
                 }}/>
 
@@ -42,8 +43,9 @@ export default function MainNavigationStack({ navigation }) {
                 component={ EquipmentScreen }
                 options={ ({ navigation }) => {
                     return {
-                        headerShown: false,
-                        headerShadowVisible: false,
+                        headerShown: true,
+                        headerShadowVisible: true,
+                        headerTitle: 'Equipment',
                     }
                 }}/>
 
@@ -62,8 +64,9 @@ export default function MainNavigationStack({ navigation }) {
                 component={ MaintenanceLogEntryScreen }
                 options={ ({ navigation }) => {
                     return {
-                        headerShown: false,
-                        headerShadowVisible: false,
+                        headerShown: true,
+                        headerShadowVisible: true,
+                        headerTitle: 'Add Maintenance Log',
                     }
                 }}/>
                 
@@ -72,8 +75,9 @@ export default function MainNavigationStack({ navigation }) {
                 component={ MaintenanceLogScreen }
                 options={ ({ navigation }) => {
                     return {
-                        headerShown: false,
-                        headerShadowVisible: false,
+                        headerShown: true,
+                        headerShadowVisible: true,
+                        headerTitle: 'Maintenance Log',
                     }
                 }}/>
             

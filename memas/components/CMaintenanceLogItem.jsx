@@ -18,7 +18,7 @@ export default function CMaintenanceLogItem (props) {
         <TouchableOpacity onPress={props.onPress}>
             <View style={styles.container}> 
                 <View style={{ marginLeft:5 }}>
-                    <Text style={{color:'#444444', fontSize: 20, fontWeight: '700',}}>
+                    <Text style={{ fontSize: 20, fontWeight: '700',}}>
                         {equipment.data.name} </Text>
                     <Text style={styles.attentionText}>Maintenance Type: {props.type} </Text>
                     <Text style={styles.attentionText}>Date: {props.date} </Text>
@@ -29,20 +29,20 @@ export default function CMaintenanceLogItem (props) {
                     <Text style={styles.noneAttentionText}>Dept: {equipment.data.department} </Text>
                 </View>
             </View>
+            <View style={{ height: 1, backgroundColor: '#CBCBCB', width: '100%'}}></View>
+
         </TouchableOpacity>
     );
 }
 
 const styles = StyleSheet.create({
     container:{
-        backgroundColor: 'green',
         marginVertical: 1,
         padding:11,
         justifyContent: 'center',
     },
 
     attentionText: {
-        color:'#444444',
         fontWeight: '500',
         fontSize: 18,
     }, 

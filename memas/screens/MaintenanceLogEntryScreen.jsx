@@ -66,13 +66,13 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                     }}/>
             </CCustomModal>
 
-            <ScrollView stickyHeaderIndices={[0]} >
-                <View style={ styles.searchBarContainer }>
+            <ScrollView>
+                {/*<View style={ styles.searchBarContainer }>
                     <CToolbar style={{ width: '100%', maxWidth: 700 }} text={ 'Add Maintenance Log'}
                         onBackPress={() => navigation.goBack()}/>
-                </View>
+                </View>*/}
 
-                <View style={{ margin: 10, backgroundColor: 'gold' }}>
+                <View style={{ margin: 10, backgroundColor: '#FAFAFA', paddingLeft: 10, borderRadius: 5, }}>
                     <Text style={{fontWeight: '500', fontSize: 22, marginBottom: 30}}>Date: 06/11/2022</Text>
                     <Text style={{fontWeight: '500', fontSize: 22,}}>{ item.data.name }</Text>
                     <Text style={styles.attentionText}>{maintenanceType} </Text>
@@ -90,7 +90,8 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                         }}/>
                 </View>
 
-                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={true} title='Other info' >
+                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, marginTop: 20}} 
+                    titleShown={true} title='Info (eg. O2 concentration)' >
                     {
                         maintenanceInfo.map((element) => {
                             return (
@@ -105,8 +106,8 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                     }}/>
                 </CCard>
 
-                <View style={{alignItems: 'center'}}>
-                    <CButton style= {{ marginVertical: 20, marginHorizontal: 20, width: '100%', maxWidth: 500 }} 
+                <View style={{alignItems: 'center',  marginHorizontal: 20}}>
+                    <CButton style= {{ marginVertical: 20, width: '100%', maxWidth: 500 }} 
                         text="Done"
                         onPress={() => {
                             const mli = new MaintenanceLogInfo()
@@ -131,12 +132,11 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'green',
+        backgroundColor: 'white',
         marginTop: 0,
     },
 
     searchBarContainer: {
-        backgroundColor: 'gold',
         flexDirection: 'row',
         justifyContent: 'center',
         alignContent: 'center',

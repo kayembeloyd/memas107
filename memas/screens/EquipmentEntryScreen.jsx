@@ -36,9 +36,9 @@ export default function EquipmentEntryScreen({ navigation }){
             setDepartments(dpt)
         })
     }, [])
+
     return (
         <View style={styles.container}>
-
             <CListModal visible={selectDepartmentModalVisibility} title='Select department' list={departments} 
                 onCancelPress={()=>{
                     setSelectDepartmentModalVisibility(false)
@@ -93,7 +93,7 @@ export default function EquipmentEntryScreen({ navigation }){
                                         if (prevTechnicalSpecifications.length >= 1){                       
                                             last = prevTechnicalSpecifications[prevTechnicalSpecifications.length - 1].id
                                         }
-                                        prevTechnicalSpecifications.push({id:(last + 1), tsKey: tsKeyInEdit, tsValue: `${(last + 1)}` + tsValueInEdit })
+                                        prevTechnicalSpecifications.push({id:(last + 1), tsKey: tsKeyInEdit, tsValue: tsValueInEdit })
                                         return prevTechnicalSpecifications
                                     })
                                     setAddTechnicalSpecificationModalVisibility(false)
@@ -111,13 +111,13 @@ export default function EquipmentEntryScreen({ navigation }){
             </CCustomModal>
 
 
-            <ScrollView stickyHeaderIndices={[0]} >
-                <View style={ styles.searchBarContainer }>
-                    <CToolbar style={{ width: '100%', maxWidth: 700 }} text='Add Equipment'
+            <ScrollView>
+                {/*<View style={ styles.searchBarContainer }>
+                    <CToolbar style={{ width: '100%' }} text='Add Equipment'
                         onBackPress={() => navigation.goBack()}/>
-                </View>
+                </View>*/}
 
-                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={true} title='General Info.'>
+                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, marginTop: 20}} titleShown={true} title='General Info.'>
                     <CTextInput onChangeText={t => {
                             setEquipmentData((prevEquipmentData) => {
                                 prevEquipmentData.name = t
@@ -174,7 +174,7 @@ export default function EquipmentEntryScreen({ navigation }){
                         hint='Supplied by'/>
                 </CCard>
 
-                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, backgroundColor: 'blue', marginTop: 20}} titleShown={true} title='Technical specifications'>
+                <CCard style={{ width: '100%', alignSelf:'center', maxWidth: 700, marginTop: 20}} titleShown={true} title='Technical specifications'>
                     {technicalSpecifications.map((element) => {
                         return (
                             <Text key={element.id} style={ styles.infoText }>{element.tsKey}: <Text style={ styles.infoValueText }>{element.tsValue}</Text>
@@ -211,17 +211,14 @@ export default function EquipmentEntryScreen({ navigation }){
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'green',
         marginTop: 0,
+        backgroundColor: 'white',
     }, 
 
     searchBarContainer: {
-        backgroundColor: 'gold',
         flexDirection: 'row',
         justifyContent: 'center',
         alignContent: 'center',
-        paddingHorizontal: 10,
-        marginTop: 5,
     },
 
     infoText: {
