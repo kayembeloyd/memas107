@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { StyleSheet, View, ScrollView, FlatList, Image, Modal, Text, TouchableOpacity } from 'react-native';
 
 import CSearchBar from '../components/CSearchBar';
@@ -6,14 +6,12 @@ import CFilterBar from '../components/CFilterBar';
 import CFilterItem from '../components/CFilterItem';
 import CEquipmentItem from '../components/CEquipmentItem'
 import CScanButton from '../components/CScanButton';
-import CButton from '../components/CButton';
 import CListModal from '../components/CListModal';
 import Equipment from '../database/models/Equipment';
 import Department from '../database/models/Department';
 
 export default function EquipmentsScreen({ navigation }){
-    const [count, setCount] = useState(0);
-
+    const [d, setD] = useState(0)
     const [equipments, setEquipments] = useState([])
     const [equipmentFilterOptions, setEquipmentFilterOptions] = useState({})
     
@@ -21,6 +19,7 @@ export default function EquipmentsScreen({ navigation }){
     const [departments, setDepartments] = useState([])
     const [selectedDepartment, setSelectedDepartment] = useState('All')
 
+    // For the FilterBar
     const [makes, setMakes] = useState([
         {id: 0, name:'All'},
         {id: 1, name:'Make 1'},
@@ -32,6 +31,7 @@ export default function EquipmentsScreen({ navigation }){
     ])
     const [selectedMake, setSelectedMake] = useState('All')
 
+    // For the FilterBar
     const [statuses, setStatuses] = useState([
         {id: 0, name:'All'},
         {id: 1, name:'Operational'},
@@ -40,6 +40,7 @@ export default function EquipmentsScreen({ navigation }){
     ])
     const [selectedStatus, setSelectedStatus] = useState('All')
 
+    // For the Modals
     const [selectDepartmentModalVisibility, setSelectDepartmentModalVisibility] = useState(false)
     const [selectMakeModalVisibility, setSelectMakeModalVisibility] = useState(false)
     const [selectStatusModalVisibility, setSelectStatusModalVisibility] = useState(false)
@@ -60,46 +61,40 @@ export default function EquipmentsScreen({ navigation }){
         }
     }
 
-    const [iIsLoading, setIIsLoading] = useState(false)
-    const [iMore, setIMore] = useState(true)
-    const [iLastIndex, setILastIndex] = useState(0)    
+    const iIsLoading = useRef(false)
+    const iMore = useRef(true)
+    const iLastIndex = useRef(0)    
     const loadEquipments = () => {
-        if (iMore){
-            setIIsLoading(true)
+        if (iMore.current){
+            iIsLoading.current = true
 
-            Equipment.getEquipments(iLastIndex + 1, 10, equipmentFilterOptions).then((results) => {
-                setIIsLoading(false)
+            Equipment.getEquipments(iLastIndex.current + 1, 10, equipmentFilterOptions).then((results) => {
+                iIsLoading.current = false
 
-                const eqs = results.data
-                setEquipments((prevEquipments) => {
-                    prevEquipments.push(...eqs)
-                    return prevEquipments
-                })
+                setEquipments(e => [...e, ...results.data])
 
-                results.meta.lastIndex ? setILastIndex(results.meta.lastIndex) : setILastIndex(0)
-                setIMore(results.meta.more)
+                results.meta.lastIndex ? iLastIndex.current = results.meta.lastIndex : iLastIndex.current = 0
+                iMore.current = results.meta.more
             })
         } else {
-            setIIsLoading(false)
+            iIsLoading.current = false
         }
     }
 
-    const [isFirstRun, setIsFirstRun] = useState(true)
+    const isFirstRun = useRef(true)
     // Run once hook
     useEffect(() => {
-        console.log('HOOK->Run once')        
         Department.getDepartments({with_all: true}).then((dpt) => {
             setDepartments(dpt)
         })
     
-        setEquipments([])
+        setEquipments(e => [])
         loadEquipments()
     }, []);
 
     // Screen focused hook
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            console.log('HOOK->Screen focused')        
         })
 
         return unsubscribe
@@ -107,20 +102,19 @@ export default function EquipmentsScreen({ navigation }){
 
     // equipmentFilterOptions track hook
     useEffect(() => {
-        console.log('HOOK->equipmentFilterOptions changed: ', equipmentFilterOptions);
-
-        if (!isFirstRun){
-            setEquipments([])
-            
-            // Resetting the loadEquipment() states
-            setIIsLoading(false)
-            setIMore(true)
-            setILastIndex(0)
-            
-            loadEquipments()
+        if (isFirstRun.current){
+            isFirstRun.current = false
+            return
         }
+            
+        // Resetting the loadEquipment() refs
+        iIsLoading.current = false
+        iMore.current = true
+        iLastIndex.current = 0
+           
+        setEquipments(e => [])
+        loadEquipments()
 
-        setIsFirstRun(false)
     }, [equipmentFilterOptions]);
     
     return (
@@ -185,17 +179,7 @@ export default function EquipmentsScreen({ navigation }){
                         </View>
                     )
                 }}
-                ListFooterComponent= { () => {
-                    return (
-                        <View style={{alignItems: 'center'}}>
-                            {
-                                iMore ? <CButton  style={{ marginVertical: 20, width:'100%', maxWidth: 300}} text={'Load more'} onPress={() => {
-                                    loadEquipments()
-                                }}/> : iIsLoading ? <CButton  style={{ marginVertical: 20, width:'100%', maxWidth: 300}} text={'Loading...'} /> : <></>
-                            }
-                        </View>
-                    )
-                }}
+                
                 stickyHeaderIndices={[0]}
                 stickyHeaderHiddenOnScroll={true}
                 data={equipments}
