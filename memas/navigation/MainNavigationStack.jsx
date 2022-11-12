@@ -97,8 +97,9 @@ export default function MainNavigationStack({ navigation }) {
                 component={ ScanScreen }
                 options={ ({ navigation }) => {
                     return {
-                        headerShown: false,
-                        headerShadowVisible: false,
+                        headerShown: true,
+                        headerShadowVisible: true,
+                        headerTitle: 'Scan Equipment',
                     }
                 }}/>
         </stack_navigator.Navigator>

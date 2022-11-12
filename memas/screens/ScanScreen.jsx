@@ -25,16 +25,16 @@ export default function ScanScreen({ navigation }){
     
       const handleBarCodeScanned = ({ type, data }) => {
         setScanned(true);
-        // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-        navigation.navigate('Equipment', { item })
+        alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+        // navigation.navigate('Equipment', { item })
       };
 
     return (
         <View style={styles.container}>
-            <View style={ styles.searchBarContainer }>
+            {/*<View style={ styles.searchBarContainer }>
                 <CToolbar style={{ width: '100%', maxWidth: 700 }} text="Scan equipment"
                     onBackPress={() => navigation.goBack()}/>
-            </View>
+            </View> */}
 
             <View style={{ flex:1, margin: 10,}}>
                 <View style={{alignSelf:'center', flex:1,  backgroundColor: 'grey', width: '100%', maxWidth: 700, borderRadius: 10,}}>
@@ -65,7 +65,6 @@ const styles = StyleSheet.create({
     }, 
 
     searchBarContainer: {
-        backgroundColor: 'gold',
         flexDirection: 'row',
         justifyContent: 'center',
         alignContent: 'center',
