@@ -12,9 +12,10 @@ import Equipment from '../database/models/Equipment';
 import Department from '../database/models/Department';
 
 export default function EquipmentsScreen({ navigation }){
+    const [count, setCount] = useState(0);
 
     const [equipments, setEquipments] = useState([])
-    const [equipmentFilterOptions, setEquipmentFilterOptions] = useState({department:'Department 2'})
+    const [equipmentFilterOptions, setEquipmentFilterOptions] = useState({})
     
     // For the FilterBar
     const [departments, setDepartments] = useState([])
@@ -83,26 +84,45 @@ export default function EquipmentsScreen({ navigation }){
         }
     }
 
-    useEffect(() => {        
-        console.log('EquipmentScreen.useEffect()')
-
+    const [isFirstRun, setIsFirstRun] = useState(true)
+    // Run once hook
+    useEffect(() => {
+        console.log('HOOK->Run once')        
         Department.getDepartments({with_all: true}).then((dpt) => {
             setDepartments(dpt)
         })
     
         setEquipments([])
-            
         loadEquipments()
+    }, []);
 
+    // Screen focused hook
+    useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            // EquipmentScreen Focused
-            // Load filter            
-        });
+            console.log('HOOK->Screen focused')        
+        })
 
-        return unsubscribe;
+        return unsubscribe
+    }, [navigation])
+
+    // equipmentFilterOptions track hook
+    useEffect(() => {
+        console.log('HOOK->equipmentFilterOptions changed: ', equipmentFilterOptions);
+
+        if (!isFirstRun){
+            setEquipments([])
+            
+            // Resetting the loadEquipment() states
+            setIIsLoading(false)
+            setIMore(true)
+            setILastIndex(0)
+            
+            loadEquipments()
+        }
+
+        setIsFirstRun(false)
+    }, [equipmentFilterOptions]);
     
-    }, [ navigation, equipmentFilterOptions ]);
-
     return (
         <View style={styles.container}>
             <CListModal visible={selectDepartmentModalVisibility} title='Select department' list={departments} 
@@ -110,6 +130,11 @@ export default function EquipmentsScreen({ navigation }){
                     setSelectDepartmentModalVisibility(false)
                 }}
                 onItemPress={(selectedItem)=>{
+                    setEquipmentFilterOptions({
+                        department: selectedItem, 
+                        status: selectedStatus
+                    })
+
                     setSelectedDepartment(selectedItem)
                     setSelectDepartmentModalVisibility(false)
                 }}/>
@@ -128,13 +153,18 @@ export default function EquipmentsScreen({ navigation }){
                     setSelectStatusModalVisibility(false)
                 }}
                 onItemPress={(selectedItem)=>{
+                    setEquipmentFilterOptions({
+                        department: selectedDepartment, 
+                        status: selectedItem
+                    })
+
                     setSelectedStatus(selectedItem)
                     setSelectStatusModalVisibility(false)
                 }}/>
 
             <FlatList ListHeaderComponent = {() => {
                     return (
-                        <View style={{ }}>
+                        <View style={{ backgroundColor: 'white' }}>
                             <View style={ styles.searchBarContainer }>
                                 <CSearchBar style={{ width: '100%', maxWidth: 700 }} searchbar_hint="search equipments"
                                     onBackPress={() => navigation.goBack()}/>
