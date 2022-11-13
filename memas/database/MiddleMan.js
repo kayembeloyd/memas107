@@ -16,6 +16,26 @@ export default class MiddleMan {
         )
     }
 
+    static async getEquipmentWithCode(asset_tag){
+        let i = 0;
+        let size = await LocalDatabase.getItem('last_e_id')
+        size = Number.parseInt(size)
+
+        while (i < size) {
+            let eq_data = await this.getEquipment(i)
+
+            if (eq_data){
+                if (this.seft(asset_tag, eq_data.asset_tag)) {
+                    return eq_data
+                }
+            }
+
+            i++
+        }
+
+        return undefined
+    }
+
     static async getEquipments(lastIndex, size, equipmentFilterOptions){
         let iStart = lastIndex
         let iSize = size

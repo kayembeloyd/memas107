@@ -22,10 +22,11 @@ export default function CTextInput(props) {
                             fontSize: 18, fontWeight: '400', fontFamily: 'Roboto', backgroundColor:'#E8E8E8', 
                             height: 53, borderRadius: 10,}} onChangeText={props.onChangeText}/>
                     )}
-                    
+            
                     {props.goButtonVisible ? (
                         <TouchableOpacity style={{backgroundColor: 'green', paddingHorizontal: 20, marginHorizontal: 10, 
-                            borderRadius: 10, justifyContent:'center', elevation: 10}}>
+                            borderRadius: 10, justifyContent:'center', elevation: 10}} 
+                            onPress={props.goButtonPress}>
                             <Ionicons name="arrow-forward" size={24} color="black" />
                         </TouchableOpacity>
                     ): <></>}
