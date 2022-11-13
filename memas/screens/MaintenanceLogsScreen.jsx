@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, FlatList } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react'
+import { StyleSheet, View, FlatList, Text } from 'react-native';
 
 import CSearchBar from '../components/CSearchBar';
 import CFilterBar from '../components/CFilterBar';
@@ -12,9 +12,9 @@ import CButton from '../components/CButton';
 
 export default function MaintenanceLogs({ route, navigation }){
 
-    const { filtering, filterEquipment } = route.params;
-
+    const {filtering, filterEquipment } = route.params;
     const [maintenanceLogs, setMaintenanceLogs] = useState([])
+    const [maintenanceLogsFilterOptions, setMaintenanceLogsOptions] = useState({asset_tag: filterEquipment ? filterEquipment.data.asset_tag : 'All'})
     
     // For the FilterBar
     const [departments, setDepartments] = useState([])
@@ -22,8 +22,8 @@ export default function MaintenanceLogs({ route, navigation }){
 
     const [maintenanceTypes, setMaintenanceTypes] = useState([
         {id: 0, name:'All'},
-        {id: 1, name:'Maintenance Type 1'},
-        {id: 2, name:'Maintenance Type 2'}
+        {id: 1, name:'Corrective Maintenance'},
+        {id: 2, name:'Preventive Maintenance'}
     ])
     const [selectedMaintenanceType, setSelectedMaintenanceType] = useState('All')
 
@@ -43,45 +43,61 @@ export default function MaintenanceLogs({ route, navigation }){
         }
     } 
 
-    const [iIsLoading, setIIsLoading] = useState(false)
-    const [iMore, setIMore] = useState(true)
-    const [iLastIndex, setILastIndex] = useState(0)    
+    const iIsLoading = useRef(false)
+    const iMore = useRef(true)
+    const iLastIndex = useRef(0)   
     const loadMaintenanceLogs = () => {
-        if (iMore){
-            setIIsLoading(true)
+        if (iMore.current){
+            iIsLoading.current = true
 
-            MaintenanceLog.getMaintenanceLogs(iLastIndex + 1, 5).then((results) => {
-                setIIsLoading(false)
+            MaintenanceLog.getMaintenanceLogs(iLastIndex.current + 1, 3, maintenanceLogsFilterOptions).then((results) => {
+                iIsLoading.current = false
 
-                const mlogs = results.data
-                setMaintenanceLogs((prevMaintenanceLogs) => {
-                    prevMaintenanceLogs.push(...mlogs)
-                    return prevMaintenanceLogs
-                })
+                results.meta.lastIndex ? iLastIndex.current = results.meta.lastIndex : iLastIndex.current = 0
+                iMore.current = results.meta.more
 
-                results.meta.lastIndex ? setILastIndex(results.meta.lastIndex) : setILastIndex(0)
-                setIMore(results.meta.more)
+                setMaintenanceLogs(ml => [...ml, ...results.data])
             })
         } else {
-            setIIsLoading(false)
+            iIsLoading.current = false
         }
     }
 
+    const isFirstRun = useRef(true)
+    // Run once hook
     useEffect(() => {
-        if (filtering === 'on'){
-        }
+        Department.getDepartments({with_all: true}).then((dpts) => {
+            setDepartments(dpts)
+        })
 
+        setMaintenanceLogs(ml => [])
+        loadMaintenanceLogs()
+    }, [])
+
+    // Screen focused hook
+    useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => { 
-            Department.getDepartments({with_all: true}).then((dpts) => {
-                setDepartments(dpts)
-            })
-
-            setMaintenanceLogs([])
-            loadMaintenanceLogs()
+            
         });
 
         return unsubscribe;
     }, [navigation])
+
+    // maintenanceLogsFilterOptions tracker Hook
+    useEffect(() => {
+        if (isFirstRun.current){
+            isFirstRun.current = false
+            return
+        }
+
+        // Resetting the Load refs
+        iIsLoading.current = false
+        iMore.current = true
+        iLastIndex.current = 0
+
+        setMaintenanceLogs(ml => [])
+        loadMaintenanceLogs()
+    }, [maintenanceLogsFilterOptions])
 
     return (
         <View style={styles.container}>
@@ -91,6 +107,12 @@ export default function MaintenanceLogs({ route, navigation }){
                     setSelectDepartmentModalVisibility(false)
                 }}
                 onItemPress={(selectedItem)=>{
+                    setMaintenanceLogsOptions({
+                        department: selectedItem,
+                        type: selectedMaintenanceType,
+                        asset_tag: filterEquipment ? filterEquipment.data.asset_tag : 'All'
+                    })
+
                     setSelectedDepartment(selectedItem)
                     setSelectDepartmentModalVisibility(false)
                 }}/>
@@ -100,6 +122,12 @@ export default function MaintenanceLogs({ route, navigation }){
                     setSelectMaintenanceTypeModalVisibility(false)
                 }}
                 onItemPress={(selectedItem)=>{
+                    setMaintenanceLogsOptions({
+                        department: selectedDepartment,
+                        type: selectedItem,
+                        asset_tag: filterEquipment ? filterEquipment.data.asset_tag : 'All'
+                    })
+
                     setSelectedMaintenanceType(selectedItem)
                     setSelectMaintenanceTypeModalVisibility(false)
                 }}/>
@@ -123,7 +151,7 @@ export default function MaintenanceLogs({ route, navigation }){
                                     
                                     <CFilterItem style={{ marginRight: 20}} filterKey='Maint... Type' filterValue={selectedMaintenanceType} 
                                         filterItemPress={(fkey) => filterItemPressHandler(fkey)}/>
-                                    
+
                                 </CFilterBar>
                             </View>
                         </View>
@@ -131,11 +159,20 @@ export default function MaintenanceLogs({ route, navigation }){
                 }}
                 ListFooterComponent= { () => {
                     return (
-                        <View style={{alignItems: 'center'}}>
+                        <View style={{ margin: 10, alignItems: 'center'}}>
                             {
-                                iMore ? <CButton  style={{ marginVertical: 20, width:'100%', maxWidth: 300}} text={'Load more'} onPress={() => {
-                                    loadMaintenanceLogs()
-                                }}/> : iIsLoading ? <CButton  style={{ marginVertical: 20, width:'100%', maxWidth: 300}} text={'Loading...'} /> : <></>
+                                iMore.current ? (
+                                    <CButton 
+                                        style={{ width: '100%', maxWidth: 700 }} 
+                                        text="Load More" 
+                                        onPress={() => {
+                                            // Load more indeed
+                                            loadMaintenanceLogs()
+                                        }}/> ) : (
+                                    iIsLoading.current ? <CButton style={{ width: '100%', maxWidth: 700 }} text="Loading..."/> : (
+                                        <Text> No More logs</Text>
+                                    )
+                                )
                             }
                         </View>
                     )

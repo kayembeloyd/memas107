@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, View, ScrollView, FlatList, Image, Modal, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, FlatList, Text } from 'react-native';
 
 import CSearchBar from '../components/CSearchBar';
 import CFilterBar from '../components/CFilterBar';
@@ -9,9 +9,9 @@ import CScanButton from '../components/CScanButton';
 import CListModal from '../components/CListModal';
 import Equipment from '../database/models/Equipment';
 import Department from '../database/models/Department';
+import CButton from '../components/CButton';
 
 export default function EquipmentsScreen({ navigation }){
-    const [d, setD] = useState(0)
     const [equipments, setEquipments] = useState([])
     const [equipmentFilterOptions, setEquipmentFilterOptions] = useState({})
     
@@ -68,13 +68,13 @@ export default function EquipmentsScreen({ navigation }){
         if (iMore.current){
             iIsLoading.current = true
 
-            Equipment.getEquipments(iLastIndex.current + 1, 10, equipmentFilterOptions).then((results) => {
+            Equipment.getEquipments(iLastIndex.current + 1, 4, equipmentFilterOptions).then((results) => {
                 iIsLoading.current = false
-
-                setEquipments(e => [...e, ...results.data])
 
                 results.meta.lastIndex ? iLastIndex.current = results.meta.lastIndex : iLastIndex.current = 0
                 iMore.current = results.meta.more
+
+                setEquipments(e => [...e, ...results.data])
             })
         } else {
             iIsLoading.current = false
@@ -179,7 +179,26 @@ export default function EquipmentsScreen({ navigation }){
                         </View>
                     )
                 }}
-                
+                ListFooterComponent={() => {
+                    return (
+                        <View style={{ margin: 10, alignItems: 'center'}}>
+                            {
+                                iMore.current ? (
+                                    <CButton 
+                                        style={{ width: '100%', maxWidth: 700 }} 
+                                        text="Load More" 
+                                        onPress={() => {
+                                            // Load more indeed
+                                            loadEquipments()
+                                        }}/> ) : (
+                                    iIsLoading.current ? <CButton style={{ width: '100%', maxWidth: 700 }} text="Loading..."/> : (
+                                        <Text> No More equipments</Text>
+                                    )
+                                )
+                            }
+                        </View>
+                    )
+                }}
                 stickyHeaderIndices={[0]}
                 stickyHeaderHiddenOnScroll={true}
                 data={equipments}

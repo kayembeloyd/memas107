@@ -14,7 +14,7 @@ export default class MaintenanceLog {
         return this.data.ml_id
     }
 
-    static async getMaintenanceLogs(lastIndex, size){
-        return await MiddleMan.getMaintenanceLogs(lastIndex, size)
+    static async getMaintenanceLogs(lastIndex, size, maintenanceLogsFilterOptions){
+        return await MiddleMan.getMaintenanceLogs(lastIndex, size, maintenanceLogsFilterOptions)
     }
 }

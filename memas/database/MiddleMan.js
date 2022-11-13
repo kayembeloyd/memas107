@@ -76,15 +76,13 @@ export default class MiddleMan {
             }
         }
 
-        const returnData = {
+        return {
             data: equipments, 
             meta: {
                 lastIndex: equipments.length >= 1 ? equipments[equipments.length - 1].data.e_id : undefined,
                 more: iMore
             }
         }
-
-        return returnData
     }
 
     static async saveEquipment(equipmentData){
@@ -149,7 +147,7 @@ export default class MiddleMan {
         )
     }
 
-    static async getMaintenanceLogs(lastIndex, size){
+    static async getMaintenanceLogs(lastIndex, size, maintenanceLogsFilterOptions){
         let iStart = lastIndex
         let iSize = size
 
@@ -158,12 +156,34 @@ export default class MiddleMan {
         let iMore = true
         
         while (iCount < iSize) {
-            const eq = {}
-            eq.data = await this.getMaintenanceLog(iStart)
+            const ml = {}
+            ml.data = await this.getMaintenanceLog(iStart)
 
-            if (eq.data){
-                maintenanceLogs.push(eq)
-                iCount++
+            if (ml.data){
+                if (maintenanceLogsFilterOptions) {
+                    // Getting the equipment
+                    const eq = {}
+                    eq.data = await this.getEquipment(ml.data.equipment_id)
+                    
+                    // Department Filter
+                    let departmentFilterTestResult = maintenanceLogsFilterOptions.department ? this.seft(eq.data.department, maintenanceLogsFilterOptions.department) : true
+                       
+                    // Maintenance Log type Filter
+                    let maintenanceTypeFilterTestResult = maintenanceLogsFilterOptions.type ? this.seft(ml.data.type, maintenanceLogsFilterOptions.type) : true
+
+                    // Equipment Filter
+                    let equipmentFilterTestResult = maintenanceLogsFilterOptions.asset_tag ? this.seft(eq.data.asset_tag, maintenanceLogsFilterOptions.asset_tag) : true
+
+                    if (departmentFilterTestResult && 
+                        maintenanceTypeFilterTestResult && 
+                        equipmentFilterTestResult){
+                            maintenanceLogs.push(ml)
+                            iCount++
+                    }
+                } else {
+                    maintenanceLogs.push(ml)
+                    iCount++
+                }
             }
 
             let lastMLID = await LocalDatabase.getItem('last_ml_id')
@@ -176,15 +196,13 @@ export default class MiddleMan {
             }
         }
 
-        const returnData = {
+        return {
             data: maintenanceLogs, 
             meta: {
                 lastIndex: maintenanceLogs.length >= 1 ? maintenanceLogs[maintenanceLogs.length - 1].data.ml_id : undefined,
                 more: iMore
             }
         }
-
-        return returnData
     }
 
     static async saveMaintenanceLog(maintenanceLogData){
