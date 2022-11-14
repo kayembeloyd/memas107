@@ -30,11 +30,6 @@ export default function MaintenanceLogScreen({ route, navigation }){
     return (
         <View style={styles.container}>
             <ScrollView>
-                {/*<View style={ styles.searchBarContainer }>
-                    <CToolbar style={{ width: '100%', maxWidth: 700 }} text={ 'Maintenance Log' }
-                        onBackPress={() => navigation.goBack()}/>
-                </View>*/}
-
                 <View style={{ margin: 10, backgroundColor: '#FAFAFA', paddingLeft: 10, borderRadius: 5, }}>
                     <Text style={{fontWeight: '500', fontSize: 22, marginBottom: 30}}>Date: { item.data.date }</Text>
                     <Text style={{fontWeight: '500', fontSize: 20,}}>{equipment.data.name}</Text>

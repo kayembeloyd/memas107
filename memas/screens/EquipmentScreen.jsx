@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { DateSelectionCalendar, DefaultTheme } from 'react-native-easy-calendar'
+import { DateSelectionCalendar } from 'react-native-easy-calendar'
 
 import TechnicalSpecification from '../database/models/TechnicalSpecification';
 
-import CToolbar from '../components/CToolbar';
 import CCard from '../components/CCard';
 import CButton from '../components/CButton';
 import CCustomModal from '../components/CCustomModal';

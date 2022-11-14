@@ -46,9 +46,7 @@ export default function HomeScreen({ navigation }){
  
                         <CButton style={{ marginTop:10 }} text="Maintenance Schedule" 
                             onPress={() => { 
-                                Equipment.getEquipments(0, 6).then((results) => {
-                                    console.log(results)
-                                })                              
+                                //                               
                             }}/>
                     </CCard>
                 </View>

@@ -9,6 +9,7 @@ import CCard from '../components/CCard';
 import CTextInput from '../components/CTextInput';
 import CButton from '../components/CButton';
 import CCustomModal from '../components/CCustomModal';
+import Equipment from '../database/models/Equipment';
 
 export default function MaintenanceLogEntryScreen({ route, navigation }){
 
@@ -22,6 +23,25 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
     const [maintenanceInfo, setMaintenanceInfo] = useState([])
 
     const [addMaintenanceInfoModalVisibility, setAddMaintenanceInfoModalVisibility] = useState(false)
+
+    const getSQLCompatibleDate = (d) => {
+        return (
+            d.getFullYear() + '-' + 
+            (d.getMonth() + 1) + '-' + 
+            d.getDate() + ' ' + 
+            (d.getHours() < 10 ? (
+                '0' + d.getHours()) 
+                : d.getHours()) + ':' + 
+            (d.getMinutes() < 10 ? 
+                '0' + d.getMinutes() 
+                : d.getMinutes()) + ':' + 
+            (d.getMilliseconds() < 10 ? 
+                '00' + d.getMilliseconds() : 
+                (d.getMilliseconds() < 100 ? 
+                    '0' + d.getMilliseconds(): 
+                    d.getMilliseconds()))
+        )
+    }
 
     useEffect(() => {
         setMaintenanceData((prevMaintenanceData) => {
@@ -46,9 +66,9 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                                 onPress={() => {
                                     setMaintenanceInfo((prevMaintenanceInfo) => {
                                         let last = 0
-                                        if (prevMaintenanceInfo.length >= 1){
+                                        if (prevMaintenanceInfo.length >= 1)
                                             last = prevMaintenanceInfo[prevMaintenanceInfo.length - 1].id
-                                        }
+                                        
                                         prevMaintenanceInfo.push({id: (last + 1), mliKey: mliKeyInEdit, mliValue: mliValueInEdit})
                                         return prevMaintenanceInfo
                                     })
@@ -67,11 +87,6 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
             </CCustomModal>
 
             <ScrollView>
-                {/*<View style={ styles.searchBarContainer }>
-                    <CToolbar style={{ width: '100%', maxWidth: 700 }} text={ 'Add Maintenance Log'}
-                        onBackPress={() => navigation.goBack()}/>
-                </View>*/}
-
                 <View style={{ margin: 10, backgroundColor: '#FAFAFA', paddingLeft: 10, borderRadius: 5, }}>
                     <Text style={{fontWeight: '500', fontSize: 22, marginBottom: 30}}>Date: 06/11/2022</Text>
                     <Text style={{fontWeight: '500', fontSize: 22,}}>{ item.data.name }</Text>
@@ -114,12 +129,24 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                             mli.data.maintenance_log_info = maintenanceInfo
                             mli.save().then((new_mli_id) => {
                                 maintenanceData.maintenance_log_info_id = new_mli_id
+                                maintenanceData.created_at = getSQLCompatibleDate(new Date())
+                                maintenanceData.date = getSQLCompatibleDate(new Date()) 
+                                maintenanceData.updated_at = getSQLCompatibleDate(new Date())
                                 const ml = new MaintenanceLog()
                                 ml.data = maintenanceData
-                                ml.save().then((new_ml_id) => {
-                                    alert('Maintenance Log saved ID: ml_id' + new_ml_id)
-                                    setMaintenanceData({})
-                                    navigation.goBack()
+                                ml.save().then((new_ml_id) => {                 
+                                    const eq = new Equipment()
+                                    eq.load(ml.data.equipment_id).then(() => {
+                                        if (eq.data) {
+                                            eq.data.updated_at = getSQLCompatibleDate(new Date())
+                                            eq.data.last_maintenance_date = getSQLCompatibleDate(new Date())
+                                            eq.save().then((new_e_id) => {
+                                                alert('Maintenance Log saved ID: ml_id' + new_ml_id + ', for equipment : e_id ' + new_e_id)
+                                                setMaintenanceData({})
+                                                navigation.goBack()
+                                            })
+                                        }
+                                    })
                                 })
                             })
                         }} />
