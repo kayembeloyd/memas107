@@ -17,6 +17,7 @@ export default function EquipmentsScreen({ navigation }){
     
     // For the search 
     const searchTerm = useRef('')
+    const iconName = useRef('arrow-back')
 
     // For the FilterBar
     const [departments, setDepartments] = useState([])
@@ -49,7 +50,13 @@ export default function EquipmentsScreen({ navigation }){
     const [selectStatusModalVisibility, setSelectStatusModalVisibility] = useState(false)
 
     const startSearchProcess = () => {
-        console.log('Starting the search: ', searchTerm.current)
+        iconName.current = 'close'
+
+        setEquipmentFilterOptions(efo => ({
+            department: efo.department ? efo.department : undefined, 
+            status: efo.status ? efo.status : undefined,
+            searchTerm: searchTerm.current !== '' ? searchTerm.current : undefined 
+        }))
     }
 
     const filterItemPressHandler = (filterItem) => {
@@ -74,6 +81,8 @@ export default function EquipmentsScreen({ navigation }){
     const loadEquipments = () => {
         if (iMore.current){
             iIsLoading.current = true
+
+            console.log('equipmentFilterOptions:', equipmentFilterOptions)
 
             Equipment.getEquipments(iLastIndex.current + 1, 4, equipmentFilterOptions).then((results) => {
                 iIsLoading.current = false
@@ -131,10 +140,11 @@ export default function EquipmentsScreen({ navigation }){
                     setSelectDepartmentModalVisibility(false)
                 }}
                 onItemPress={(selectedItem)=>{
-                    setEquipmentFilterOptions({
+                    setEquipmentFilterOptions(efo => ({
                         department: selectedItem, 
-                        status: selectedStatus
-                    })
+                        status: selectedStatus,
+                        searchTerm: efo.searchTerm ? efo.searchTerm : undefined
+                    }))
 
                     setSelectedDepartment(selectedItem)
                     setSelectDepartmentModalVisibility(false)
@@ -154,10 +164,11 @@ export default function EquipmentsScreen({ navigation }){
                     setSelectStatusModalVisibility(false)
                 }}
                 onItemPress={(selectedItem)=>{
-                    setEquipmentFilterOptions({
+                    setEquipmentFilterOptions(efo => ({
                         department: selectedDepartment, 
-                        status: selectedItem
-                    })
+                        status: selectedItem,
+                        searchTerm: efo.searchTerm ? efo.searchTerm : undefined
+                    }))
 
                     setSelectedStatus(selectedItem)
                     setSelectStatusModalVisibility(false)
@@ -170,8 +181,20 @@ export default function EquipmentsScreen({ navigation }){
                                 <CSearchBar style={{ width: '100%', maxWidth: 700 }} 
                                     searchbar_hint="search equipments"
                                     onBackPress={() => {
-                                        navigation.goBack()
+                                        if (iconName.current === 'arrow-back'){
+                                            navigation.goBack()
+                                        } else {
+                                            iconName.current = 'arrow-back'
+                                            searchTerm.current = ''
+                                            
+                                            setEquipmentFilterOptions(efo => ({
+                                                department: efo.department ? efo.department : 'All', 
+                                                status: efo.status ? efo.status : 'All',
+                                            }))
+                                        }
                                     }}
+                                    hValue={searchTerm.current}
+                                    iconName={iconName.current}
                                     onChangeText={(t) => searchTerm.current = t} 
                                     onSearchPress={() => startSearchProcess()}
                                     onSubmitEditing={() => startSearchProcess()}/>

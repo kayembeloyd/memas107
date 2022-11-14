@@ -9,12 +9,13 @@ export default function CSearchBar(props) {
             <TouchableOpacity style={{ borderRadius: 10, justifyContent:'center', 
                     paddingHorizontal: 15, height: '100%'}} onPress={props.onBackPress}>
                 <Ionicons 
-                    name='arrow-back' size={28} color="black"/>
+                    name={props.iconName ? props.iconName : 'arrow-back'} size={28} color="black"/>
             </TouchableOpacity>
 
             <View style={{flex: 1, flexDirection: 'row', width: '100%', 
                     paddingHorizontal: 10, alignItems:'center',}}>
-                <TextInput style={ styles.input } placeholder={props.searchbar_hint} 
+                <TextInput style={ styles.input } 
+                    placeholder={(props.hValue ? (props.hValue === '' ? props.searchbar_hint : props.hValue) : (props.searchbar_hint))} 
                     onChangeText={(t) => {
                         props.onChangeText(t)
                     }} 

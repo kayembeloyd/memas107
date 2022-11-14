@@ -9,6 +9,21 @@ export default class MiddleMan {
         return (model_property === filter_property)
     }
 
+    // Simple Search filter test
+    static ssft(model_property, filter_property){
+        String.prototype.like = function(search) {
+            if (typeof search !== 'string' || this === null) {return false; }
+            // Remove special chars
+            search = search.replace(new RegExp("([\\.\\\\\\+\\*\\?\\[\\^\\]\\$\\(\\)\\{\\}\\=\\!\\<\\>\\|\\:\\-])", "g"), "\\$1");
+            // Replace % and _ with equivalent regex
+            search = search.replace(/%/g, '.*').replace(/_/g, '.');
+            // Check matches
+            return RegExp('^' + search + '$', 'gi').test(this);
+        }
+
+        return model_property.like('%' + filter_property + '%')
+    }
+
     // For equipments
     static async getEquipment(e_id){
         return JSON.parse(
@@ -56,7 +71,10 @@ export default class MiddleMan {
                     // Status Filter
                     let statusFilterTestResult = equipmentFilterOptions.status ? this.seft(eq.data.status, equipmentFilterOptions.status) : true 
                 
-                    if (departmentFilterTestResult && statusFilterTestResult){
+                    // Search Filter
+                    let searchFilterTestResult = equipmentFilterOptions.searchTerm ? this.ssft(eq.data.name, equipmentFilterOptions.searchTerm) : true
+
+                    if (departmentFilterTestResult && statusFilterTestResult && searchFilterTestResult){
                         equipments.push(eq)
                         iCount++                        
                     }
