@@ -12,7 +12,7 @@ export default function ScanScreen({ navigation }){
     const [scanned, setScanned] = useState(false);
 
     const [manualCode, setManualCode] = useState('')
-    /*
+    
     useEffect(() => {
         const getBarCodeScannerPermissions = async () => {
           const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -20,10 +20,36 @@ export default function ScanScreen({ navigation }){
         };
     
         getBarCodeScannerPermissions();
-      }, []); */
+    }, []); 
+
+    const showNotFound = (msg) => {
+        switch (Platform.OS) {
+            case 'android':
+            case 'ios':
+            case 'macos':
+            case 'windows':
+                Alert.alert(
+                    'Info', msg,
+                    [
+                        {
+                            text: 'Okay',
+                            onPress: () => {
+                                setScanned(false)
+                            }
+                        }
+                    ]
+                )                            
+                break;
+            case 'web':
+                alert('Equipment Not Found')
+                navigation.goBack()
+            default:
+                break;
+        }
+    }
     
-      const handleBarCodeScanned = ({ type, data }) => {
-        setScanned(true);
+    const handleBarCodeScanned = ({ type, data }) => {
+        setScanned(true)
 
         if (data.startsWith("MEMASCODE:")){
             const codes = data.split(':');
@@ -34,20 +60,19 @@ export default function ScanScreen({ navigation }){
                 if (item.data){
                     navigation.navigate('Equipment', {item})
                 } else {
-                    alert('Equipment Not found')
+                    showNotFound('Equipment Not Found')
                 }
             }) 
         } else {
-            alert('Invalid code!!!')
-            navigation.goBack() 
+            showNotFound('Invalid code') 
         }
-      };
+    };
 
     return (
         <View style={styles.container}>
             <View style={{ flex:1, margin: 10,}}>
                 <View style={{alignSelf:'center', flex:1,  backgroundColor: 'grey', width: '100%', maxWidth: 700, borderRadius: 10,}}>
-                    {/*
+                    {
                         hasPermission ? 
                         (
                             <BarCodeScanner
@@ -56,7 +81,7 @@ export default function ScanScreen({ navigation }){
                         ) : (
                             <Text style={{ color: 'white'}}>No access to camera</Text>
                         )
-                    */}
+                    }
                 </View>
             </View>
 
@@ -71,28 +96,7 @@ export default function ScanScreen({ navigation }){
                     if (item.data){
                         navigation.navigate('Equipment', {item})
                     } else {
-                        switch (Platform.OS) {
-                            case 'android':
-                            case 'ios':
-                            case 'macos':
-                            case 'windows':
-                                Alert.alert(
-                                    'Info', 'Equipment not found',
-                                    [
-                                        {
-                                            text: 'Okay',
-                                            onPress: () => {
-                                                setScanned(false)
-                                            }
-                                        }
-                                    ]
-                                )                            
-                                break;
-                            case 'web':
-                                alert('Equipment Not Found')
-                            default:
-                                break;
-                        }
+                        showNotFound('Equipment Not Found')
                     }
                 })  
             }}/>
