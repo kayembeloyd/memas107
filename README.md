@@ -13,4 +13,4 @@ MEMAS is a management software developed by Lloyd Kayembe (Biomedical Engineer, 
 6. Supported on *web*, *android*, *iOS*, *windows*
 
 > ## Note 
-> Web is not working properly 
+> Web is not working properly for now
