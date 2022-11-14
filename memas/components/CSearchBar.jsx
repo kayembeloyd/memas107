@@ -1,19 +1,38 @@
 import React from "react";
-import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
+import { StyleSheet, TextInput, View, TouchableOpacity, Platform } from "react-native";
 
 import { Ionicons } from '@expo/vector-icons';
 
 export default function CSearchBar(props) {
     return (
         <View style={[styles.container, {...props.style}]}>
-            <TouchableOpacity onPress={props.onBackPress}>
-                <Ionicons style={{ paddingHorizontal: 10 }} 
-                    name="arrow-back" size={28} color="black"/>
+            <TouchableOpacity style={{ borderRadius: 10, justifyContent:'center', 
+                    paddingHorizontal: 15, height: '100%'}} onPress={props.onBackPress}>
+                <Ionicons 
+                    name='arrow-back' size={28} color="black"/>
             </TouchableOpacity>
+
+            <View style={{flex: 1, flexDirection: 'row', width: '100%', 
+                    paddingHorizontal: 10, alignItems:'center',}}>
+                <TextInput style={ styles.input } placeholder={props.searchbar_hint} 
+                    onChangeText={(t) => {
+                        props.onChangeText(t)
+                    }} 
+                    onSubmitEditing={props.onSubmitEditing}/>
+            </View>
             
-            <TextInput style={ styles.input } placeholder={props.searchbar_hint}>
-                
-            </TextInput>
+            {
+                Platform.OS === 'web' ? (
+                    !props.isSearchIconVisible ? (
+                        <TouchableOpacity style={{ paddingHorizontal: 15,
+                            borderRadius: 10, justifyContent:'center', height: '100%'}} 
+                            onPress={props.onSearchPress}>
+                            <Ionicons name="search" size={24} color="black" />
+                        </TouchableOpacity>
+                    ) : <></>
+                ) : <></>
+            }
+
         </View>
     );
 }
@@ -23,9 +42,9 @@ const styles = StyleSheet.create({
         backgroundColor:'#F5F5F5',
         borderRadius: 10,
         flexDirection: 'row',
-        paddingHorizontal: 10,
         height: 48,
-        alignItems:'center',
+        alignItems:'stretch',
+        justifyContent: 'space-evenly',
         marginVertical: 5,
         elevation: 2,
     },
@@ -34,7 +53,7 @@ const styles = StyleSheet.create({
         flex: 1,
         height: '100%',
         borderWidth: 0,
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
         outlineWidth:0,
         fontSize: 18, fontWeight: '400', fontFamily: 'Roboto', 
     },

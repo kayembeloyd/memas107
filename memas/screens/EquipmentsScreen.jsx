@@ -15,6 +15,9 @@ export default function EquipmentsScreen({ navigation }){
     const [equipments, setEquipments] = useState([])
     const [equipmentFilterOptions, setEquipmentFilterOptions] = useState({})
     
+    // For the search 
+    const searchTerm = useRef('')
+
     // For the FilterBar
     const [departments, setDepartments] = useState([])
     const [selectedDepartment, setSelectedDepartment] = useState('All')
@@ -44,6 +47,10 @@ export default function EquipmentsScreen({ navigation }){
     const [selectDepartmentModalVisibility, setSelectDepartmentModalVisibility] = useState(false)
     const [selectMakeModalVisibility, setSelectMakeModalVisibility] = useState(false)
     const [selectStatusModalVisibility, setSelectStatusModalVisibility] = useState(false)
+
+    const startSearchProcess = () => {
+        console.log('Starting the search: ', searchTerm.current)
+    }
 
     const filterItemPressHandler = (filterItem) => {
         switch (filterItem) {
@@ -160,8 +167,14 @@ export default function EquipmentsScreen({ navigation }){
                     return (
                         <View style={{ backgroundColor: 'white' }}>
                             <View style={ styles.searchBarContainer }>
-                                <CSearchBar style={{ width: '100%', maxWidth: 700 }} searchbar_hint="search equipments"
-                                    onBackPress={() => navigation.goBack()}/>
+                                <CSearchBar style={{ width: '100%', maxWidth: 700 }} 
+                                    searchbar_hint="search equipments"
+                                    onBackPress={() => {
+                                        navigation.goBack()
+                                    }}
+                                    onChangeText={(t) => searchTerm.current = t} 
+                                    onSearchPress={() => startSearchProcess()}
+                                    onSubmitEditing={() => startSearchProcess()}/>
                             </View>
                             
                             <View style={ styles.filterBarContainer }>
