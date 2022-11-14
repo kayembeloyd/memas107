@@ -16,6 +16,10 @@ export default function MaintenanceLogs({ route, navigation }){
     const [maintenanceLogs, setMaintenanceLogs] = useState([])
     const [maintenanceLogsFilterOptions, setMaintenanceLogsOptions] = useState({asset_tag: filterEquipment ? filterEquipment.data.asset_tag : 'All'})
     
+    // For the search 
+    const searchTerm = useRef('')
+    const iconName = useRef('arrow-back')
+    
     // For the FilterBar
     const [departments, setDepartments] = useState([])
     const [selectedDepartment, setSelectedDepartment] = useState('All')
@@ -29,6 +33,16 @@ export default function MaintenanceLogs({ route, navigation }){
 
     const [selectDepartmentModalVisibility, setSelectDepartmentModalVisibility] = useState(false)
     const [selectMaintenanceTypeModalVisibility, setSelectMaintenanceTypeModalVisibility] = useState(false)
+
+    const startSearchProcess = () => {
+        iconName.current = 'close'
+
+        setMaintenanceLogsOptions(mlo => ({
+            department: mlo.department ? mlo.department : undefined, 
+            type: mlo.type ? mlo.type : undefined,
+            searchTerm: filterEquipment ? undefined : (searchTerm.current !== '' ? searchTerm.current : undefined)
+        }))
+    }
 
     const filterItemPressHandler = (filterItem) => {
         switch (filterItem) {
@@ -49,6 +63,8 @@ export default function MaintenanceLogs({ route, navigation }){
     const loadMaintenanceLogs = () => {
         if (iMore.current){
             iIsLoading.current = true
+
+            console.log('maintenanceLogsFilterOptions:', maintenanceLogsFilterOptions)
 
             MaintenanceLog.getMaintenanceLogs(iLastIndex.current + 1, 3, maintenanceLogsFilterOptions).then((results) => {
                 iIsLoading.current = false
@@ -107,11 +123,12 @@ export default function MaintenanceLogs({ route, navigation }){
                     setSelectDepartmentModalVisibility(false)
                 }}
                 onItemPress={(selectedItem)=>{
-                    setMaintenanceLogsOptions({
+                    setMaintenanceLogsOptions(mlo => ({
                         department: selectedItem,
                         type: selectedMaintenanceType,
-                        asset_tag: filterEquipment ? filterEquipment.data.asset_tag : 'All'
-                    })
+                        asset_tag: filterEquipment ? filterEquipment.data.asset_tag : 'All',
+                        searchTerm: filterEquipment ? undefined : (mlo.searchTerm ? mlo.searchTerm : undefined)
+                    }))
 
                     setSelectedDepartment(selectedItem)
                     setSelectDepartmentModalVisibility(false)
@@ -122,11 +139,13 @@ export default function MaintenanceLogs({ route, navigation }){
                     setSelectMaintenanceTypeModalVisibility(false)
                 }}
                 onItemPress={(selectedItem)=>{
-                    setMaintenanceLogsOptions({
+                    setMaintenanceLogsOptions(mlo => ({
                         department: selectedDepartment,
                         type: selectedItem,
-                        asset_tag: filterEquipment ? filterEquipment.data.asset_tag : 'All'
-                    })
+                        asset_tag: filterEquipment ? filterEquipment.data.asset_tag : 'All',
+                        searchTerm: filterEquipment ? undefined : (mlo.searchTerm ? mlo.searchTerm : undefined)
+                    }))
+
 
                     setSelectedMaintenanceType(selectedItem)
                     setSelectMaintenanceTypeModalVisibility(false)
@@ -139,7 +158,26 @@ export default function MaintenanceLogs({ route, navigation }){
                                 <CSearchBar 
                                     style={{ width: '100%', maxWidth: 700 }} 
                                     searchbar_hint={'Filtering(' + filtering + ')' + (filterEquipment ? '(' + filterEquipment.data.name + ')' : '')}
-                                    onBackPress={() => navigation.goBack()}/>
+                                    onBackPress={() => {
+                                        if (iconName.current === 'arrow-back'){
+                                            navigation.goBack()
+                                        } else {
+                                            iconName.current = 'arrow-back'
+                                            searchTerm.current = ''
+                                            
+                                            setMaintenanceLogsOptions(mlo => ({
+                                                department: mlo.department ? mlo.department : 'All',
+                                                type: mlo.type ? mlo.type : 'All',
+                                                asset_tag: filterEquipment ? filterEquipment.data.asset_tag : 'All',
+                                                searchTerm: undefined
+                                            }))
+                                        }
+                                    }}
+                                    hValue={searchTerm.current}
+                                    iconName={iconName.current}
+                                    onChangeText={(t) => searchTerm.current = t} 
+                                    onSearchPress={() => startSearchProcess()}
+                                    onSubmitEditing={() => startSearchProcess()}/>
                             </View>
                             
                             <View style={ styles.filterBarContainer }>

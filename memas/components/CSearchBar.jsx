@@ -17,9 +17,10 @@ export default function CSearchBar(props) {
                 <TextInput style={ styles.input } 
                     placeholder={(props.hValue ? (props.hValue === '' ? props.searchbar_hint : props.hValue) : (props.searchbar_hint))} 
                     onChangeText={(t) => {
-                        props.onChangeText(t)
+                        if (props.onChangeText)
+                            props.onChangeText(t)
                     }} 
-                    onSubmitEditing={props.onSubmitEditing}/>
+                    onSubmitEditing={props.onSubmitEditing ? props.onSubmitEditing : () => {}}/>
             </View>
             
             {

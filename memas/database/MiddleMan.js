@@ -192,9 +192,13 @@ export default class MiddleMan {
                     // Equipment Filter
                     let equipmentFilterTestResult = maintenanceLogsFilterOptions.asset_tag ? this.seft(eq.data.asset_tag, maintenanceLogsFilterOptions.asset_tag) : true
 
+                    // Search Filter
+                    let searchFilterTestResult = maintenanceLogsFilterOptions.searchTerm ? this.ssft(eq.data.name, maintenanceLogsFilterOptions.searchTerm) : true
+
                     if (departmentFilterTestResult && 
                         maintenanceTypeFilterTestResult && 
-                        equipmentFilterTestResult){
+                        equipmentFilterTestResult && 
+                        searchFilterTestResult){
                             maintenanceLogs.push(ml)
                             iCount++
                     }
