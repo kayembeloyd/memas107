@@ -82,8 +82,6 @@ export default function EquipmentsScreen({ navigation }){
         if (iMore.current){
             iIsLoading.current = true
 
-            console.log('equipmentFilterOptions:', equipmentFilterOptions)
-
             Equipment.getEquipments(iLastIndex.current + 1, 4, equipmentFilterOptions).then((results) => {
                 iIsLoading.current = false
 
@@ -186,7 +184,7 @@ export default function EquipmentsScreen({ navigation }){
                                         } else {
                                             iconName.current = 'arrow-back'
                                             searchTerm.current = ''
-                                            
+
                                             setEquipmentFilterOptions(efo => ({
                                                 department: efo.department ? efo.department : 'All', 
                                                 status: efo.status ? efo.status : 'All',

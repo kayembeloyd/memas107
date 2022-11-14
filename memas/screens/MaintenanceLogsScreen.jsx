@@ -64,8 +64,6 @@ export default function MaintenanceLogs({ route, navigation }){
         if (iMore.current){
             iIsLoading.current = true
 
-            console.log('maintenanceLogsFilterOptions:', maintenanceLogsFilterOptions)
-
             MaintenanceLog.getMaintenanceLogs(iLastIndex.current + 1, 3, maintenanceLogsFilterOptions).then((results) => {
                 iIsLoading.current = false
 
