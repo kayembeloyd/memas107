@@ -172,7 +172,8 @@ export default function EquipmentsScreen({ navigation }){
                     setSelectStatusModalVisibility(false)
                 }}/>
 
-            <FlatList ListHeaderComponent = {() => {
+            <FlatList 
+                ListHeaderComponent = {() => {
                     return (
                         <View style={{ backgroundColor: 'white' }}>
                             <View style={ styles.searchBarContainer }>

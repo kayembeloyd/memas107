@@ -33,6 +33,25 @@ export default function EquipmentScreen({ route, navigation }){
     const [statusModalVisibility, setStatusModalVisibility] = useState(false)
     const [selectNextServiceModalVisibility, setSelectNextServiceModalVisibility] = useState(false)
 
+    const getSQLCompatibleDate = (d) => {
+        return (
+            d.getFullYear() + '-' + 
+            (d.getMonth() + 1) + '-' + 
+            d.getDate() + ' ' + 
+            (d.getHours() < 10 ? (
+                '0' + d.getHours()) 
+                : d.getHours()) + ':' + 
+            (d.getMinutes() < 10 ? 
+                '0' + d.getMinutes() 
+                : d.getMinutes()) + ':' + 
+            (d.getMilliseconds() < 10 ? 
+                '00' + d.getMilliseconds() : 
+                (d.getMilliseconds() < 100 ? 
+                    '0' + d.getMilliseconds(): 
+                    d.getMilliseconds()))
+        )
+    }
+
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => { 
             const technical_specification = new TechnicalSpecification()
@@ -63,7 +82,12 @@ export default function EquipmentScreen({ route, navigation }){
                                 }}/>
                             <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save' 
                                 onPress={() => {
+                                    if (item.data.status !== statuses[currentStatusIndex].name){                                        
+                                        item.data.updated_at = getSQLCompatibleDate(new Date())
+                                    }
+
                                     item.data.status = statuses[currentStatusIndex].name
+                                    
                                     // save equipment
                                     var eq = new Equipment();
                                     eq.data = item.data
@@ -96,6 +120,10 @@ export default function EquipmentScreen({ route, navigation }){
                                 }}/>
                             <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save' 
                                 onPress={() => {
+                                    if (item.data.next_service_date !== selectedNextServiceDate){                                        
+                                        item.data.updated_at = getSQLCompatibleDate(new Date())
+                                    }
+
                                     item.data.next_service_date = selectedNextServiceDate
                                     var eq = new Equipment();
                                     eq.data = item.data

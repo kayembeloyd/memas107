@@ -8,7 +8,6 @@ import CCard from '../components/CCard';
 import CCustomModal from '../components/CCustomModal';
 import CListModal from '../components/CListModal';
 import CTextInput from '../components/CTextInput';
-import CToolbar from '../components/CToolbar';
 import Department from '../database/models/Department';
 import Equipment from '../database/models/Equipment';
 import TechnicalSpecification from '../database/models/TechnicalSpecification';
@@ -31,6 +30,26 @@ export default function EquipmentEntryScreen({ navigation }){
 
     const [addTechnicalSpecificationModalVisibility, setAddTechnicalSpecificationModalVisibility] = useState(false)
 
+    const getSQLCompatibleDate = (d) => {
+        return (
+            d.getFullYear() + '-' + 
+            (d.getMonth() + 1) + '-' + 
+            d.getDate() + ' ' + 
+            (d.getHours() < 10 ? (
+                '0' + d.getHours()) 
+                : d.getHours()) + ':' + 
+            (d.getMinutes() < 10 ? 
+                '0' + d.getMinutes() 
+                : d.getMinutes()) + ':' + 
+            (d.getMilliseconds() < 10 ? 
+                '00' + d.getMilliseconds() : 
+                (d.getMilliseconds() < 100 ? 
+                    '0' + d.getMilliseconds(): 
+                    d.getMilliseconds()))
+        )
+    }
+
+    
     useEffect(() => {
         Department.getDepartments({ with_all: false }).then((dpt) => {
             setDepartments(dpt)
@@ -193,6 +212,10 @@ export default function EquipmentEntryScreen({ navigation }){
                         tss.data.technical_specification = technicalSpecifications
                         tss.save().then((new_tss_id) => {
                             equipmentData.technical_specification_id = new_tss_id
+
+                            equipmentData.created_at = getSQLCompatibleDate(new Date())
+                            equipmentData.updated_at = getSQLCompatibleDate(new Date())
+
                             const eq = new Equipment()
                             eq.data = equipmentData
                             eq.save().then((new_e_id) => {
