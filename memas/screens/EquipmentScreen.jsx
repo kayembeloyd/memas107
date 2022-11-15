@@ -67,8 +67,10 @@ export default function EquipmentScreen({ route, navigation }){
                             <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save' 
                                 onPress={() => {
                                     if (currentStatusIndex >= 0 && statuses.length > 0) {
-                                        if (item.data.status !== statuses[currentStatusIndex].name)                                  
+                                        if (item.data.status !== statuses[currentStatusIndex].name){
                                             item.data.updated_at = DatesHelper.getSQLCompatibleDate(new Date())
+                                            item.data.update_status = 'pending'
+                                        }                           
                                         
                                         item.data.status = statuses[currentStatusIndex].name
                                         
@@ -106,8 +108,10 @@ export default function EquipmentScreen({ route, navigation }){
 
                             <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save' 
                                 onPress={() => {
-                                    if (item.data.next_service_date !== selectedNextServiceDate)                                        
+                                    if (item.data.next_service_date !== selectedNextServiceDate){
                                         item.data.updated_at = DatesHelper.getSQLCompatibleDate(new Date())
+                                        item.data.update_status = 'pending'
+                                    }                                        
                                     
                                     item.data.next_service_date = selectedNextServiceDate
                                     var eq = new Equipment();

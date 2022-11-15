@@ -113,6 +113,7 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                                 maintenanceData.maintenance_log_info_id = new_mli_id
                                 maintenanceData.created_at = DatesHelper.getSQLCompatibleDate(new Date())
                                 maintenanceData.date = DatesHelper.getSQLCompatibleDate(new Date()) 
+                                maintenanceData.update_status = 'pending'
                                 maintenanceData.updated_at = DatesHelper.getSQLCompatibleDate(new Date())
                             
                                 const ml = new MaintenanceLog()
@@ -122,6 +123,7 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                                     eq.load(ml.data.equipment_id).then(() => {
                                         if (eq.data) {
                                             eq.data.updated_at = DatesHelper.getSQLCompatibleDate(new Date())
+                                            eq.data.update_status = 'pending'
                                             eq.data.last_maintenance_date = DatesHelper.getSQLCompatibleDate(new Date())
                                             eq.save().then((new_e_id) => {
                                                 alert('Maintenance Log saved')

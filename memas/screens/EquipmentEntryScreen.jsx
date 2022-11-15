@@ -188,6 +188,7 @@ export default function EquipmentEntryScreen({ navigation }){
 
                             equipmentData.created_at = DatesHelper.getSQLCompatibleDate(new Date())
                             equipmentData.updated_at = DatesHelper.getSQLCompatibleDate(new Date())
+                            equipmentData.update_status = 'pending'
 
                             const eq = new Equipment()
                             eq.data = equipmentData
