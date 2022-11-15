@@ -9,6 +9,7 @@ import CMaintenanceLogItem from '../components/CMaintenanceLogItem';
 import MaintenanceLog from '../database/models/MaintenanceLog';
 import Department from '../database/models/Department';
 import CButton from '../components/CButton';
+import MaintenanceType from '../database/models/MaintenanceType';
 
 export default function MaintenanceLogs({ route, navigation }){
 
@@ -24,11 +25,7 @@ export default function MaintenanceLogs({ route, navigation }){
     const [departments, setDepartments] = useState([])
     const [selectedDepartment, setSelectedDepartment] = useState('All')
 
-    const [maintenanceTypes, setMaintenanceTypes] = useState([
-        {id: 0, name:'All'},
-        {id: 1, name:'Corrective Maintenance'},
-        {id: 2, name:'Preventive Maintenance'}
-    ])
+    const [maintenanceTypes, setMaintenanceTypes] = useState([])
     const [selectedMaintenanceType, setSelectedMaintenanceType] = useState('All')
 
     const [selectDepartmentModalVisibility, setSelectDepartmentModalVisibility] = useState(false)
@@ -64,7 +61,7 @@ export default function MaintenanceLogs({ route, navigation }){
         if (iMore.current){
             iIsLoading.current = true
 
-            MaintenanceLog.getMaintenanceLogs(iLastIndex.current + 1, 3, maintenanceLogsFilterOptions).then((results) => {
+            MaintenanceLog.getMaintenanceLogs(iLastIndex.current + 1, 10, maintenanceLogsFilterOptions).then((results) => {
                 iIsLoading.current = false
 
                 results.meta.lastIndex ? iLastIndex.current = results.meta.lastIndex : iLastIndex.current = 0
@@ -80,9 +77,8 @@ export default function MaintenanceLogs({ route, navigation }){
     const isFirstRun = useRef(true)
     // Run once hook
     useEffect(() => {
-        Department.getDepartments({with_all: true}).then((dpts) => {
-            setDepartments(dpts)
-        })
+        Department.getDepartments({with_all: true}).then((dpts) => setDepartments(dpts))
+        MaintenanceType.getMaintenanceTypes({with_all : true}).then((mtypes) => setMaintenanceTypes(mtypes))
 
         setMaintenanceLogs(ml => [])
         loadMaintenanceLogs()
@@ -90,11 +86,9 @@ export default function MaintenanceLogs({ route, navigation }){
 
     // Screen focused hook
     useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => { 
-            
-        });
+        return navigation.addListener('focus', () => {
 
-        return unsubscribe;
+        });
     }, [navigation])
 
     // maintenanceLogsFilterOptions tracker Hook
@@ -117,9 +111,7 @@ export default function MaintenanceLogs({ route, navigation }){
         <View style={styles.container}>
             {/** Here goes the filterSelectModal modal */}
             <CListModal visible={selectDepartmentModalVisibility} title='Select department' list={departments} 
-                onCancelPress={()=>{
-                    setSelectDepartmentModalVisibility(false)
-                }}
+                onCancelPress={()=> setSelectDepartmentModalVisibility(false) }
                 onItemPress={(selectedItem)=>{
                     setMaintenanceLogsOptions(mlo => ({
                         department: selectedItem,
@@ -133,9 +125,7 @@ export default function MaintenanceLogs({ route, navigation }){
                 }}/>
 
             <CListModal visible={selectMaintenanceTypeModalVisibility} title='Select maintenance type' list={maintenanceTypes} 
-                onCancelPress={()=>{
-                    setSelectMaintenanceTypeModalVisibility(false)
-                }}
+                onCancelPress={() => setSelectMaintenanceTypeModalVisibility(false) }
                 onItemPress={(selectedItem)=>{
                     setMaintenanceLogsOptions(mlo => ({
                         department: selectedDepartment,
@@ -143,7 +133,6 @@ export default function MaintenanceLogs({ route, navigation }){
                         asset_tag: filterEquipment ? filterEquipment.data.asset_tag : 'All',
                         searchTerm: filterEquipment ? undefined : (mlo.searchTerm ? mlo.searchTerm : undefined)
                     }))
-
 
                     setSelectedMaintenanceType(selectedItem)
                     setSelectMaintenanceTypeModalVisibility(false)
@@ -157,9 +146,8 @@ export default function MaintenanceLogs({ route, navigation }){
                                     style={{ width: '100%', maxWidth: 700 }} 
                                     searchbar_hint={'Filtering(' + filtering + ')' + (filterEquipment ? '(' + filterEquipment.data.name + ')' : '')}
                                     onBackPress={() => {
-                                        if (iconName.current === 'arrow-back'){
-                                            navigation.goBack()
-                                        } else {
+                                        if (iconName.current === 'arrow-back') navigation.goBack()
+                                        else {
                                             iconName.current = 'arrow-back'
                                             searchTerm.current = ''
                                             
@@ -178,16 +166,17 @@ export default function MaintenanceLogs({ route, navigation }){
                                     onSubmitEditing={() => startSearchProcess()}/>
                             </View>
                             
-                            <View style={ styles.filterBarContainer }>
+                            <View style={{marginTop: 10,}}>
                                 <CFilterBar style={{alignItems: 'flex-start',}}>
-                                    { filterEquipment ? <></> : (
-                                        <CFilterItem style={{ marginRight: 20}} filterKey='Department' filterValue={selectedDepartment} 
-                                        filterItemPress={(fkey) => filterItemPressHandler(fkey)} />
-                                    )}
+                                    {
+                                        filterEquipment ? <></> : (
+                                            <CFilterItem style={{ marginRight: 20}} filterKey='Department' filterValue={selectedDepartment} 
+                                            filterItemPress={(fkey) => filterItemPressHandler(fkey)} />
+                                        )
+                                    }
                                     
                                     <CFilterItem style={{ marginRight: 20}} filterKey='Maint... Type' filterValue={selectedMaintenanceType} 
                                         filterItemPress={(fkey) => filterItemPressHandler(fkey)}/>
-
                                 </CFilterBar>
                             </View>
                         </View>
@@ -218,9 +207,8 @@ export default function MaintenanceLogs({ route, navigation }){
                 data={maintenanceLogs}
                 keyExtractor={(item) => item.data.ml_id}
                 renderItem={({ item }) => (
-                    <CMaintenanceLogItem equipment_id={item.data.equipment_id} log_id={item.data.ml_id} type={item.data.type} date={item.data.date} onPress={() => {
-                        navigation.navigate('MaintenanceLog',  { item })
-                    }}/>
+                    <CMaintenanceLogItem equipment_id={item.data.equipment_id} log_id={item.data.ml_id} type={item.data.type} date={item.data.date} 
+                    onPress={() => navigation.navigate('MaintenanceLog',  { item }) }/>
                 )}
             />
         </View>
@@ -241,9 +229,4 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginTop: 5,
     },
-
-    filterBarContainer: {
-        marginTop: 10,
-    },
-    
 })

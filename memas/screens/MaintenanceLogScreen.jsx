@@ -4,7 +4,6 @@ import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import Equipment from '../database/models/Equipment'
 import MaintenanceLogInfo from '../database/models/MaintenanceLogInfo'
 
-import CToolbar from '../components/CToolbar';
 import CCard from '../components/CCard';
 
 export default function MaintenanceLogScreen({ route, navigation }){
@@ -12,7 +11,6 @@ export default function MaintenanceLogScreen({ route, navigation }){
     const {item} = route.params;
 
     const [equipment, setEquipment] = useState({data:{}})
-
     const [maintenanceInfo, setMaintenanceInfo] = useState([])
 
     useEffect(() => {
@@ -47,7 +45,8 @@ export default function MaintenanceLogScreen({ route, navigation }){
                     {
                         maintenanceInfo.map((element) => {
                             return (
-                                <Text key={element.id} style={ styles.infoText }>{element.mliKey}: <Text style={ styles.infoValueText }>{element.mliValue}</Text>
+                                <Text key={element.id} style={ styles.infoText }>
+                                    {element.mliKey}: <Text style={ styles.infoValueText }>{element.mliValue}</Text>
                                 </Text>
                             )
                         })

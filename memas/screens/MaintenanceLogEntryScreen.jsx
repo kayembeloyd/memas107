@@ -10,6 +10,7 @@ import CTextInput from '../components/CTextInput';
 import CButton from '../components/CButton';
 import CCustomModal from '../components/CCustomModal';
 import Equipment from '../database/models/Equipment';
+import DatesHelper from '../helper_classes/DatesHelper';
 
 export default function MaintenanceLogEntryScreen({ route, navigation }){
 
@@ -23,25 +24,6 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
     const [maintenanceInfo, setMaintenanceInfo] = useState([])
 
     const [addMaintenanceInfoModalVisibility, setAddMaintenanceInfoModalVisibility] = useState(false)
-
-    const getSQLCompatibleDate = (d) => {
-        return (
-            d.getFullYear() + '-' + 
-            (d.getMonth() + 1) + '-' + 
-            d.getDate() + ' ' + 
-            (d.getHours() < 10 ? (
-                '0' + d.getHours()) 
-                : d.getHours()) + ':' + 
-            (d.getMinutes() < 10 ? 
-                '0' + d.getMinutes() 
-                : d.getMinutes()) + ':' + 
-            (d.getMilliseconds() < 10 ? 
-                '00' + d.getMilliseconds() : 
-                (d.getMilliseconds() < 100 ? 
-                    '0' + d.getMilliseconds(): 
-                    d.getMilliseconds()))
-        )
-    }
 
     useEffect(() => {
         setMaintenanceData((prevMaintenanceData) => {
@@ -122,26 +104,28 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                 </CCard>
 
                 <View style={{alignItems: 'center',  marginHorizontal: 20}}>
-                    <CButton style= {{ marginVertical: 20, width: '100%', maxWidth: 500 }} 
-                        text="Done"
+                    <CButton style= {{ marginVertical: 20, width: '100%', maxWidth: 500 }} text="Done"
                         onPress={() => {
                             const mli = new MaintenanceLogInfo()
+                            
                             mli.data.maintenance_log_info = maintenanceInfo
                             mli.save().then((new_mli_id) => {
                                 maintenanceData.maintenance_log_info_id = new_mli_id
-                                maintenanceData.created_at = getSQLCompatibleDate(new Date())
-                                maintenanceData.date = getSQLCompatibleDate(new Date()) 
-                                maintenanceData.updated_at = getSQLCompatibleDate(new Date())
+                                maintenanceData.created_at = DatesHelper.getSQLCompatibleDate(new Date())
+                                maintenanceData.date = DatesHelper.getSQLCompatibleDate(new Date()) 
+                                maintenanceData.updated_at = DatesHelper.getSQLCompatibleDate(new Date())
+                            
                                 const ml = new MaintenanceLog()
                                 ml.data = maintenanceData
                                 ml.save().then((new_ml_id) => {                 
                                     const eq = new Equipment()
                                     eq.load(ml.data.equipment_id).then(() => {
                                         if (eq.data) {
-                                            eq.data.updated_at = getSQLCompatibleDate(new Date())
-                                            eq.data.last_maintenance_date = getSQLCompatibleDate(new Date())
+                                            eq.data.updated_at = DatesHelper.getSQLCompatibleDate(new Date())
+                                            eq.data.last_maintenance_date = DatesHelper.getSQLCompatibleDate(new Date())
                                             eq.save().then((new_e_id) => {
-                                                alert('Maintenance Log saved ID: ml_id' + new_ml_id + ', for equipment : e_id ' + new_e_id)
+                                                alert('Maintenance Log saved')
+                                
                                                 setMaintenanceData({})
                                                 navigation.goBack()
                                             })

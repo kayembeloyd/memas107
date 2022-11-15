@@ -326,4 +326,38 @@ export default class MiddleMan {
             ])
         }
     }
+
+    // For Status
+    static async getStatuses(options){
+        if (options.with_all) {
+            return ([
+                {id: 0, name:'All'},
+                {id: 1, name:'Operational'},
+                {id: 2, name:'Idle'},
+                {id: 3, name:'Broken'},
+            ])
+        } else {
+            return ([
+                {id: 1, name:'Operational'},
+                {id: 2, name:'Idle'},
+                {id: 3, name:'Broken'}, 
+            ])
+        }
+    }
+
+    // For MaintenanceType
+    static async getMaintenanceTypes(options){
+        if (options.with_all) {
+            return ([
+                {id: 0, name:'All'},
+                {id: 1, name:'Corrective Maintenance'},
+                {id: 2, name:'Preventive Maintenance'}
+            ])
+        } else {
+            return ([
+                {id: 1, name:'Corrective Maintenance'},
+                {id: 2, name:'Preventive Maintenance'}
+            ])
+        }
+    }
 }

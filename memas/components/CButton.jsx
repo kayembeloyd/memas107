@@ -5,7 +5,7 @@ export default function CButton(props) {
     return (
         <TouchableOpacity style={ props.style } onPress={ props.onPress }>
             <View style={ [styles.container, { backgroundColor: props.backgroundColor === undefined ? '#E3E3E3' : props.backgroundColor }] }>
-                <Text style={ styles.text }>
+                <Text style={ {fontSize: 15} }>
                     { props.text }
                 </Text>
             </View>
@@ -22,8 +22,4 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
     }, 
-
-    text: {
-        fontSize: 15
-    }
 })

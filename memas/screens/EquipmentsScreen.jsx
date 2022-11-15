@@ -10,6 +10,7 @@ import CListModal from '../components/CListModal';
 import Equipment from '../database/models/Equipment';
 import Department from '../database/models/Department';
 import CButton from '../components/CButton';
+import Status from '../database/models/Status';
 
 export default function EquipmentsScreen({ navigation }){
     const [equipments, setEquipments] = useState([])
@@ -24,24 +25,11 @@ export default function EquipmentsScreen({ navigation }){
     const [selectedDepartment, setSelectedDepartment] = useState('All')
 
     // For the FilterBar
-    const [makes, setMakes] = useState([
-        {id: 0, name:'All'},
-        {id: 1, name:'Make 1'},
-        {id: 2, name:'Make 2'},
-        {id: 3, name:'Make 3'},
-        {id: 4, name:'Make 4'},
-        {id: 5, name:'Make 5'},
-        {id: 6, name:'Make 6'},
-    ])
+    const [makes, setMakes] = useState([ {id: 0, name:'All'}, {id: 1, name:'Make 1'},  {id: 2, name:'Make 2'}])
     const [selectedMake, setSelectedMake] = useState('All')
 
     // For the FilterBar
-    const [statuses, setStatuses] = useState([
-        {id: 0, name:'All'},
-        {id: 1, name:'Operational'},
-        {id: 2, name:'Idle'},
-        {id: 3, name:'Broken'},
-    ])
+    const [statuses, setStatuses] = useState([])
     const [selectedStatus, setSelectedStatus] = useState('All')
 
     // For the Modals
@@ -81,8 +69,7 @@ export default function EquipmentsScreen({ navigation }){
     const loadEquipments = () => {
         if (iMore.current){
             iIsLoading.current = true
-
-            Equipment.getEquipments(iLastIndex.current + 1, 4, equipmentFilterOptions).then((results) => {
+            Equipment.getEquipments(iLastIndex.current + 1, 10, equipmentFilterOptions).then((results) => {
                 iIsLoading.current = false
 
                 results.meta.lastIndex ? iLastIndex.current = results.meta.lastIndex : iLastIndex.current = 0
@@ -98,20 +85,16 @@ export default function EquipmentsScreen({ navigation }){
     const isFirstRun = useRef(true)
     // Run once hook
     useEffect(() => {
-        Department.getDepartments({with_all: true}).then((dpt) => {
-            setDepartments(dpt)
-        })
-    
+        Department.getDepartments({with_all: true}).then((dpt) => setDepartments(dpt))
+        Status.getStatuses({with_all: true}).then((sts) => setStatuses(sts))
+
         setEquipments(e => [])
         loadEquipments()
     }, []);
 
     // Screen focused hook
     useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-        })
-
-        return unsubscribe
+        return navigation.addListener('focus', () => {})
     }, [navigation])
 
     // equipmentFilterOptions track hook
@@ -128,16 +111,13 @@ export default function EquipmentsScreen({ navigation }){
            
         setEquipments(e => [])
         loadEquipments()
-
     }, [equipmentFilterOptions]);
     
     return (
         <View style={styles.container}>
             <CListModal visible={selectDepartmentModalVisibility} title='Select department' list={departments} 
-                onCancelPress={()=>{
-                    setSelectDepartmentModalVisibility(false)
-                }}
-                onItemPress={(selectedItem)=>{
+                onCancelPress={() => setSelectDepartmentModalVisibility(false)}
+                onItemPress={(selectedItem) => {
                     setEquipmentFilterOptions(efo => ({
                         department: selectedItem, 
                         status: selectedStatus,
@@ -149,18 +129,14 @@ export default function EquipmentsScreen({ navigation }){
                 }}/>
 
             <CListModal visible={selectMakeModalVisibility} title='Select make' list={makes} 
-                onCancelPress={()=>{
-                    setSelectMakeModalVisibility(false)
-                }}
+                onCancelPress={() => setSelectMakeModalVisibility(false)}
                 onItemPress={(selectedItem)=>{
                     setSelectedMake(selectedItem)
                     setSelectMakeModalVisibility(false)
                 }}/>
 
             <CListModal visible={selectStatusModalVisibility} title='Select status' list={statuses} 
-                onCancelPress={()=>{
-                    setSelectStatusModalVisibility(false)
-                }}
+                onCancelPress={() => setSelectStatusModalVisibility(false)}
                 onItemPress={(selectedItem)=>{
                     setEquipmentFilterOptions(efo => ({
                         department: selectedDepartment, 
@@ -180,9 +156,8 @@ export default function EquipmentsScreen({ navigation }){
                                 <CSearchBar style={{ width: '100%', maxWidth: 700 }} 
                                     searchbar_hint="search equipments"
                                     onBackPress={() => {
-                                        if (iconName.current === 'arrow-back'){
-                                            navigation.goBack()
-                                        } else {
+                                        if (iconName.current === 'arrow-back') navigation.goBack()
+                                        else {
                                             iconName.current = 'arrow-back'
                                             searchTerm.current = ''
 
@@ -199,7 +174,7 @@ export default function EquipmentsScreen({ navigation }){
                                     onSubmitEditing={() => startSearchProcess()}/>
                             </View>
                             
-                            <View style={ styles.filterBarContainer }>
+                            <View style={{ marginTop: 5, }}>
                                 <CFilterBar style={{alignItems: 'flex-start',}}>
                                     <CFilterItem style={{ marginRight: 20}} filterKey='Department' filterValue={selectedDepartment} 
                                         filterItemPress={(fkey) => filterItemPressHandler(fkey)} />
@@ -219,15 +194,11 @@ export default function EquipmentsScreen({ navigation }){
                         <View style={{ margin: 10, alignItems: 'center'}}>
                             {
                                 iMore.current ? (
-                                    <CButton 
-                                        style={{ width: '100%', maxWidth: 700 }} 
-                                        text="Load More" 
-                                        onPress={() => {
-                                            // Load more indeed
-                                            loadEquipments()
-                                        }}/> ) : (
+                                    <CButton style={{ width: '100%', maxWidth: 700 }} text="Load More" 
+                                        onPress={() => loadEquipments() }/> 
+                                    ) : (
                                     iIsLoading.current ? <CButton style={{ width: '100%', maxWidth: 700 }} text="Loading..."/> : (
-                                        <Text> No More equipments</Text>
+                                        <Text> No More equipments </Text>
                                     )
                                 )
                             }
@@ -242,9 +213,7 @@ export default function EquipmentsScreen({ navigation }){
                     <CEquipmentItem name={item.data.name} department={item.data.department} 
                         model={item.data.model} make={item.data.make} asset_tag={item.data.asset_tag} 
                         status={item.data.status ? item.data.status : 'not set'}
-                        onPress={() => {
-                            navigation.navigate('Equipment', { item })
-                        }} />
+                        onPress={() => navigation.navigate('Equipment', { item }) } />
                 )}
             />
 
@@ -271,8 +240,4 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         marginTop: 5,
     },
-
-    filterBarContainer: {
-        marginTop: 5,
-    },  
 })
