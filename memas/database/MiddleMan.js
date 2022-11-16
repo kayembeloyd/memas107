@@ -2,7 +2,7 @@ import DatesHelper from "../helper_classes/DatesHelper"
 import LocalDatabase from "./LocalDatabase"
 
 export default class MiddleMan {
-    static API_ADDRESS = 'http://192.168.155.58/memas107api'
+    static API_ADDRESS = 'http://192.168.45.58/memas107api'
 
     // Simple equality filter test
     static seft(model_property, filter_property){
@@ -55,18 +55,23 @@ export default class MiddleMan {
                 const data = await response.json();
                 console.log('data from fetching: ', data);
 
-                data.forEach(async equipmentData => { 
-                    equipmentData.technical_specification.technical_specification = JSON.parse(equipmentData.technical_specification.technical_specification) 
-                    
-                    const tss_id = await this.saveTechnicalSpecification(equipmentData.technical_specification)
+                // Never put await in a for each loop eeeH nalira
+                for (const equipmentData of data) {
+                    var modified_technical_specification_data = {}
+
+                    modified_technical_specification_data.technical_specification = JSON.parse(equipmentData.technical_specification.technical_specification)
+                    modified_technical_specification_data.tss_oid = equipmentData.technical_specification.tss_oid
+
+                    delete equipmentData.e_id
                     delete equipmentData.technical_specification
-                    
+
+                    const tss_id = await this.saveTechnicalSpecification(modified_technical_specification_data)
+
                     equipmentData.technical_specification_id = tss_id
-                    
-                    console.log('data:', equipmentData)
+
                     await this.saveEquipment(equipmentData)
-                })
-                    
+                }
+                
                 thereIsMore = data.length > 0
                 page++ 
 
@@ -80,10 +85,9 @@ export default class MiddleMan {
         var equipmentsToUpload = [];
         thereIsMore = true
         lastIndex = 0
-        
         const upload = async (eqsToUpload) => {
             try {
-                eqsToUpload.forEach(async eq => {
+                for (const eq of eqsToUpload) {
                     const technicalSpecificationData = await this.getTechnicalSpecification(eq.data.technical_specification_id);
                     eq.data.technical_specification = JSON.stringify(technicalSpecificationData.technical_specification)
 
@@ -98,7 +102,7 @@ export default class MiddleMan {
                     const data = await response.json();
                     
                     await this.saveEquipment(data);
-                });
+                }
             } catch (error) {
                 console.error(error)
             }    
@@ -108,7 +112,7 @@ export default class MiddleMan {
             var equipmentResults = await this.getEquipments(lastIndex + 1, 10)
             var equipments = equipmentResults.data
 
-            equipments.forEach(async equipment => {
+            for (const equipment of equipments) {
                 if (equipment.data.e_oid === 0){
                     equipmentsToUpload.push(equipment);
 
@@ -116,8 +120,8 @@ export default class MiddleMan {
                         await upload(equipmentsToUpload)
                         equipmentsToUpload = []
                     }
-                } 
-            });
+                }    
+            }
 
             thereIsMore = equipmentResults.meta.more
             lastIndex = equipmentResults.meta.lastIndex
@@ -149,9 +153,10 @@ export default class MiddleMan {
                 })
 
                 const data = await response.json();
-                data.forEach(async equipmentData => { 
-                    await this.saveEquipment(equipmentData)
-                })
+
+                for (const equipmentData of data) {
+                    await this.saveEquipment(equipmentData)                    
+                }
             } catch (error) {
                 console.error(error)
             }
@@ -282,15 +287,13 @@ export default class MiddleMan {
 
             return undefined
         }
-        
-        
+
         let lastTSSID = await LocalDatabase.getItem('last_tss_id')
         let newTSSID = 0
 
         lastTSSID ? newTSSID = Number.parseInt(lastTSSID) + 1 : newTSSID = 1
-
         technicalSpecificationData.tss_id = newTSSID
-        
+
         await LocalDatabase.setItem('last_tss_id', `${newTSSID}`)
         await LocalDatabase.setItem('tss_id' + `${newTSSID}`, JSON.stringify(technicalSpecificationData))
 
