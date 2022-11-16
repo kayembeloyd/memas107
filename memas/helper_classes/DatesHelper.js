@@ -17,4 +17,8 @@ export default class DatesHelper {
                     d.getMilliseconds()))
         )
     }
+
+    static greaterDate(d1, d2){
+        return ''
+    }
 }

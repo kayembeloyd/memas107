@@ -92,7 +92,8 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                     {
                         maintenanceInfo.map((element) => {
                             return (
-                                <Text key={element.id} style={ styles.infoText }>{element.mliKey}: <Text style={ styles.infoValueText }>{element.mliValue}</Text>
+                                <Text key={element.id} style={ styles.infoText }>
+                                    {element.mliKey}: <Text style={ styles.infoValueText }>{element.mliValue}</Text>
                                 </Text>
                             )
                         })
