@@ -2,7 +2,7 @@ import DatesHelper from "../helper_classes/DatesHelper"
 import LocalDatabase from "./LocalDatabase"
 
 export default class MiddleMan {
-    static API_ADDRESS = 'localhost/memas107'
+    static API_ADDRESS = 'http://192.168.155.58/memas107api'
 
     // Simple equality filter test
     static seft(model_property, filter_property){
@@ -30,7 +30,7 @@ export default class MiddleMan {
         // Get largest uploaded_at date
         var thereIsMore = true
         var lastIndex = 0
-        var greaterDate = '2022-11-10 17:43:021';
+        var greaterDate = '2022-11-06 17:43:21';
         while(thereIsMore){
             var equipmentResults = await this.getEquipments(lastIndex + 1, 10)
             var equipments = equipmentResults.data
@@ -49,20 +49,32 @@ export default class MiddleMan {
         while(thereIsMore){
             try{
                 const response = await fetch(
-                    this.API_ADDRESS + '/equipments?number_of_equipments=' + 10 + '&page=' + page + '&uploaded_at=' + greaterDate + "'"
+                    this.API_ADDRESS + '/equipments?number_of_equipments=' + 10 + '&page=' + page + '&uploaded_at=' + greaterDate
                 );
         
                 const data = await response.json();
                 data.forEach(async equipmentData => { 
+                    equipmentData.technical_specification.technical_specification = JSON.parse(equipmentData.technical_specification.technical_specification) 
+                    
+                    const tss_id = await this.saveTechnicalSpecification(equipmentData.technical_specification)
+                    delete equipmentData.technical_specification
+                    delete equipmentData.e_id
+
+                    equipmentData.technical_specification_id = tss_id
+                    
+                    console.log('data:', equipmentData)
+                    
                     await this.saveEquipment(equipmentData)
                 })
                     
-                thereIsMore == data.length > 0
-                page++
+                thereIsMore = data.length > 0
+                page++ 
+
             } catch (error){
                 console.error(error);
+                thereIsMore = false
             }
-        }
+        } 
 
         // Upload equipments
         var equipmentsToUpload = [];
@@ -73,7 +85,7 @@ export default class MiddleMan {
             try {
                 eqsToUpload.forEach(async eq => {
                     const technicalSpecificationData = await this.getTechnicalSpecification(eq.data.technical_specification_id);
-                    eq.data.technical_specification = JSON.stringify(technicalSpecificationData)
+                    eq.data.technical_specification = JSON.stringify(technicalSpecificationData.technical_specification)
 
                     const response = await fetch(this.API_ADDRESS + '/equipments', {
                         method: 'POST',
@@ -111,8 +123,7 @@ export default class MiddleMan {
             lastIndex = equipmentResults.meta.lastIndex
         }
 
-        if (equipmentsToUpload.length > 0) upload(equipmentsToUpload)
-
+        if (equipmentsToUpload.length > 0) await upload(equipmentsToUpload)
 
         // Update equipments
         thereIsMore = true
@@ -133,16 +144,14 @@ export default class MiddleMan {
                         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
                     },
                     body: new URLSearchParams({
-                        'equipments' : equipmentsData
+                        'equipments' : JSON.stringify(equipmentsData)
                     }).toString()
                 })
 
-                
                 const data = await response.json();
                 data.forEach(async equipmentData => { 
                     await this.saveEquipment(equipmentData)
                 })
-                
             } catch (error) {
                 console.error(error)
             }

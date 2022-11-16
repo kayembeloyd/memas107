@@ -186,6 +186,7 @@ export default function EquipmentEntryScreen({ navigation }){
                         tss.save().then((new_tss_id) => {
                             equipmentData.technical_specification_id = new_tss_id
 
+                            equipmentData.e_oid = 0
                             equipmentData.created_at = DatesHelper.getSQLCompatibleDate(new Date())
                             equipmentData.updated_at = DatesHelper.getSQLCompatibleDate(new Date())
                             equipmentData.update_status = 'pending'

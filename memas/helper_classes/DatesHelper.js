@@ -1,5 +1,6 @@
 export default class DatesHelper {
     static getSQLCompatibleDate(d) {
+        const vf = new Date();
         return (
             d.getFullYear() + '-' + 
             (d.getMonth() + 1) + '-' + 
@@ -10,11 +11,9 @@ export default class DatesHelper {
             (d.getMinutes() < 10 ? 
                 '0' + d.getMinutes() 
                 : d.getMinutes()) + ':' + 
-            (d.getMilliseconds() < 10 ? 
-                '00' + d.getMilliseconds() : 
-                (d.getMilliseconds() < 100 ? 
-                    '0' + d.getMilliseconds(): 
-                    d.getMilliseconds()))
+            (d.getSeconds() < 10 ? 
+                '0' + d.getSeconds() : 
+                (d.getSeconds()))
         )
     }
 
