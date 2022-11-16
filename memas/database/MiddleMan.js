@@ -66,7 +66,6 @@ export default class MiddleMan {
                     delete equipmentData.technical_specification
 
                     const tss_id = await this.saveTechnicalSpecification(modified_technical_specification_data)
-
                     equipmentData.technical_specification_id = tss_id
 
                     await this.saveEquipment(equipmentData)
