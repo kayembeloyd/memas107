@@ -53,17 +53,17 @@ export default class MiddleMan {
                 );
         
                 const data = await response.json();
+                console.log('data from fetching: ', data);
+
                 data.forEach(async equipmentData => { 
                     equipmentData.technical_specification.technical_specification = JSON.parse(equipmentData.technical_specification.technical_specification) 
                     
                     const tss_id = await this.saveTechnicalSpecification(equipmentData.technical_specification)
                     delete equipmentData.technical_specification
-                    delete equipmentData.e_id
-
+                    
                     equipmentData.technical_specification_id = tss_id
                     
                     console.log('data:', equipmentData)
-                    
                     await this.saveEquipment(equipmentData)
                 })
                     
@@ -242,12 +242,14 @@ export default class MiddleMan {
 
     static async saveEquipment(equipmentData){
         if (equipmentData.e_id){
-            if (await this.getEquipment(equipmentData.e_id)){
-                await LocalDatabase.setItem('e_id' + equipmentData.e_id, `${JSON.stringify(equipmentData)}`)
-                return equipmentData.e_id
+            if (equipmentData.e_id !== -1){
+                if (await this.getEquipment(equipmentData.e_id)){
+                    await LocalDatabase.setItem('e_id' + equipmentData.e_id, `${JSON.stringify(equipmentData)}`)
+                    return equipmentData.e_id
+                }
+    
+                return undefined
             }
-
-            return undefined
         }
         
         
