@@ -19,6 +19,6 @@ export default class DatesHelper {
     }
 
     static greaterDate(d1, d2){
-        return ''
+        return (new Date(date_one).getTime() >= new Date(date_two).getTime() ? date_one : date_two)
     }
 }
