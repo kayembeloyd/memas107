@@ -45,8 +45,6 @@ export default class MiddleMan {
                 lastIndex = equipmentResults.meta.lastIndex
             }
 
-
-
             // Fetch the equipments
             thereIsMore = true
             var page = 1
