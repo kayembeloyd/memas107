@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import CCard from '../components/CCard';
 import CButton from '../components/CButton';
 import CScanButton from '../components/CScanButton';
+import LocalDatabase from '../database/LocalDatabase';
 
 export default function HomeScreen({ navigation }){
     return (
@@ -36,7 +37,11 @@ export default function HomeScreen({ navigation }){
                         
                         <CButton style={{ marginTop:10 }} text="Maintenance Logs" onPress={() =>navigation.navigate('MaintenanceLogs') }/>
                         
-                        <CButton style={{ marginTop:10 }} text="Maintenance Schedule" onPress={() => {}}/>
+                        <CButton style={{ marginTop:10 }} text="Maintenance Schedule" onPress={() => {
+                            LocalDatabase.clearEverything().then(() => {
+                                console.log('database cleared')
+                            })
+                        }}/>
                     </CCard>
                 </View>
 
