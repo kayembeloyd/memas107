@@ -27,142 +27,152 @@ export default class MiddleMan {
 
     // ONLINE
     static async sync(){
-        // Get largest uploaded_at date
-        var thereIsMore = true
-        var lastIndex = 0
-        var greaterDate = '2022-11-06 17:43:21';
-        while(thereIsMore){
-            var equipmentResults = await this.getEquipments(lastIndex + 1, 10)
-            var equipments = equipmentResults.data
+        const equipmentSync = async () => {
+            
+            // Get largest uploaded_at date
+            var thereIsMore = true
+            var lastIndex = 0
+            var greaterDate = '2022-11-06 17:43:21';
+            while(thereIsMore){
+                var equipmentResults = await this.getEquipments(lastIndex + 1, 10)
+                var equipments = equipmentResults.data
 
-            equipments.forEach(equipment => {
-                greaterDate = DatesHelper.greaterDate(equipment.data.uploaded_at, greaterDate)
-            });
+                equipments.forEach(equipment => {
+                    greaterDate = DatesHelper.greaterDate(equipment.data.uploaded_at, greaterDate)
+                });
 
-            thereIsMore = equipmentResults.meta.more
-            lastIndex = equipmentResults.meta.lastIndex
-        }
-
-        // Fetch the equipments
-        thereIsMore = true
-        var page = 1
-        while(thereIsMore){
-            try{
-                const response = await fetch(
-                    this.API_ADDRESS + '/equipments?number_of_equipments=' + 10 + '&page=' + page + '&uploaded_at=' + greaterDate
-                );
-        
-                const data = await response.json();
-                console.log('data from fetching: ', data);
-
-                // Never put await in a for each loop eeeH nalira
-                for (const equipmentData of data) {
-                    var modified_technical_specification_data = {}
-
-                    modified_technical_specification_data.technical_specification = JSON.parse(equipmentData.technical_specification.technical_specification)
-                    modified_technical_specification_data.tss_oid = equipmentData.technical_specification.tss_oid
-
-                    delete equipmentData.e_id
-                    delete equipmentData.technical_specification
-
-                    const tss_id = await this.saveTechnicalSpecification(modified_technical_specification_data)
-                    equipmentData.technical_specification_id = tss_id
-
-                    await this.saveEquipment(equipmentData)
-                }
-                
-                thereIsMore = data.length > 0
-                page++ 
-
-            } catch (error){
-                console.error(error);
-                thereIsMore = false
+                thereIsMore = equipmentResults.meta.more
+                lastIndex = equipmentResults.meta.lastIndex
             }
-        } 
 
-        // Upload equipments
-        var equipmentsToUpload = [];
-        thereIsMore = true
-        lastIndex = 0
-        const upload = async (eqsToUpload) => {
-            try {
-                for (const eq of eqsToUpload) {
-                    const technicalSpecificationData = await this.getTechnicalSpecification(eq.data.technical_specification_id);
-                    eq.data.technical_specification = JSON.stringify(technicalSpecificationData.technical_specification)
 
-                    const response = await fetch(this.API_ADDRESS + '/equipments', {
+
+            // Fetch the equipments
+            thereIsMore = true
+            var page = 1
+            while(thereIsMore){
+                try{
+                    const response = await fetch(
+                        this.API_ADDRESS + '/equipments?number_of_equipments=' + 10 + '&page=' + page + '&uploaded_at=' + greaterDate
+                    );
+            
+                    const data = await response.json();
+
+                    for (const equipmentData of data) {
+                        var modified_technical_specification_data = {}
+
+                        modified_technical_specification_data.technical_specification = JSON.parse(equipmentData.technical_specification.technical_specification)
+                        modified_technical_specification_data.tss_oid = equipmentData.technical_specification.tss_oid
+
+                        delete equipmentData.e_id
+                        delete equipmentData.technical_specification
+
+                        const tss_id = await this.saveTechnicalSpecification(modified_technical_specification_data)
+                        equipmentData.technical_specification_id = tss_id
+
+                        await this.saveEquipment(equipmentData)
+                    }
+                    
+                    thereIsMore = data.length > 0
+                    page++ 
+
+                } catch (error){
+                    console.error(error);
+                    thereIsMore = false
+                }
+            } 
+
+
+
+            // Upload equipments
+            var equipmentsToUpload = [];
+            thereIsMore = true
+            lastIndex = 0
+            const upload = async (eqsToUpload) => {
+                try {
+                    for (const eq of eqsToUpload) {
+                        const technicalSpecificationData = await this.getTechnicalSpecification(eq.data.technical_specification_id);
+                        eq.data.technical_specification = JSON.stringify(technicalSpecificationData.technical_specification)
+
+                        const response = await fetch(this.API_ADDRESS + '/equipments', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                            },
+                            body: new URLSearchParams(eq.data).toString()
+                        })
+
+                        const data = await response.json();
+                        
+                        await this.saveEquipment(data);
+                    }
+                } catch (error) {
+                    console.error(error)
+                }    
+            }
+
+            while(thereIsMore){
+                var equipmentResults = await this.getEquipments(lastIndex + 1, 10)
+                var equipments = equipmentResults.data
+
+                for (const equipment of equipments) {
+                    if (equipment.data.e_oid === 0){
+                        equipmentsToUpload.push(equipment);
+
+                        if (equipmentsToUpload.length >= 10){
+                            await upload(equipmentsToUpload)
+                            equipmentsToUpload = []
+                        }
+                    }    
+                }
+
+                thereIsMore = equipmentResults.meta.more
+                lastIndex = equipmentResults.meta.lastIndex
+            }
+
+            if (equipmentsToUpload.length > 0) await upload(equipmentsToUpload)
+
+            
+
+            // Update equipments
+            thereIsMore = true
+            lastIndex = 0
+            while(thereIsMore){
+                var equipmentResults = await this.getEquipments(lastIndex + 1, 10)
+                var equipments = equipmentResults.data
+                var equipmentsData = []
+
+                equipments.forEach( equipment => equipmentsData.push(equipment.data) );
+
+                try {
+                    const response = await fetch(this.API_ADDRESS + '/equipments/update', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
                         },
-                        body: new URLSearchParams(eq.data).toString()
+                        body: new URLSearchParams({ 'equipments' : JSON.stringify(equipmentsData) }).toString()
                     })
 
                     const data = await response.json();
+
+                    for (const equipmentData of data) await this.saveEquipment(equipmentData)                    
                     
-                    await this.saveEquipment(data);
+                } catch (error) {
+                    console.error(error)
                 }
-            } catch (error) {
-                console.error(error)
-            }    
-        }
 
-        while(thereIsMore){
-            var equipmentResults = await this.getEquipments(lastIndex + 1, 10)
-            var equipments = equipmentResults.data
-
-            for (const equipment of equipments) {
-                if (equipment.data.e_oid === 0){
-                    equipmentsToUpload.push(equipment);
-
-                    if (equipmentsToUpload.length >= 10){
-                        await upload(equipmentsToUpload)
-                        equipmentsToUpload = []
-                    }
-                }    
+                thereIsMore = equipmentResults.meta.more
+                lastIndex = equipmentResults.meta.lastIndex
             }
-
-            thereIsMore = equipmentResults.meta.more
-            lastIndex = equipmentResults.meta.lastIndex
         }
 
-        if (equipmentsToUpload.length > 0) await upload(equipmentsToUpload)
+        const maintenanceLogsSync = async () => {
 
-        // Update equipments
-        thereIsMore = true
-        lastIndex = 0
-        while(thereIsMore){
-            var equipmentResults = await this.getEquipments(lastIndex + 1, 10)
-            var equipments = equipmentResults.data
-            var equipmentsData = []
-
-            equipments.forEach( equipment => {
-                equipmentsData.push(equipment.data)    
-            });
-
-            try {
-                const response = await fetch(this.API_ADDRESS + '/equipments/update', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                    },
-                    body: new URLSearchParams({
-                        'equipments' : JSON.stringify(equipmentsData)
-                    }).toString()
-                })
-
-                const data = await response.json();
-
-                for (const equipmentData of data) {
-                    await this.saveEquipment(equipmentData)                    
-                }
-            } catch (error) {
-                console.error(error)
-            }
-
-            thereIsMore = equipmentResults.meta.more
-            lastIndex = equipmentResults.meta.lastIndex
         }
+        
+        await equipmentSync()
+
+        await maintenanceLogsSync()
     }
 
     // LOCAL
