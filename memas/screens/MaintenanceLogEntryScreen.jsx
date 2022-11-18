@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 
+import MiddleMan from '../database/MiddleMan';
 import MaintenanceLog from '../database/models/MaintenanceLog'
 import MaintenanceLogInfo from '../database/models/MaintenanceLogInfo'
+import Equipment from '../database/models/Equipment';
 
-import CToolbar from '../components/CToolbar';
 import CCard from '../components/CCard';
 import CTextInput from '../components/CTextInput';
 import CButton from '../components/CButton';
 import CCustomModal from '../components/CCustomModal';
-import Equipment from '../database/models/Equipment';
+
 import DatesHelper from '../helper_classes/DatesHelper';
 
 export default function MaintenanceLogEntryScreen({ route, navigation }){
@@ -32,7 +33,14 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
             prevMaintenanceData.date = '06/11/2022'
             return prevMaintenanceData
         })
-    })
+    }, [])
+
+    const triggerSync = () => {
+        console.log('syncing...')
+        MiddleMan.sync().then(() => {
+            console.log('sync complete')
+        })
+    }
 
     return (
         <View style={styles.container}>
@@ -128,8 +136,8 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                                             eq.data.update_status = 'pending'
                                             eq.data.last_maintenance_date = DatesHelper.getSQLCompatibleDate(new Date())
                                             eq.save().then((new_e_id) => {
+                                                triggerSync()
                                                 alert('Maintenance Log saved')
-                                
                                                 setMaintenanceData({})
                                                 navigation.goBack()
                                             })

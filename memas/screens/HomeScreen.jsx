@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -6,9 +6,26 @@ import { Ionicons } from '@expo/vector-icons';
 import CCard from '../components/CCard';
 import CButton from '../components/CButton';
 import CScanButton from '../components/CScanButton';
+
+import MiddleMan from '../database/MiddleMan';
 import LocalDatabase from '../database/LocalDatabase';
 
 export default function HomeScreen({ navigation }){
+    const isSyncing = useRef(false)
+
+    useEffect(() => {
+        return navigation.addListener('focus', () => {
+            if (!isSyncing.current){
+                isSyncing.current = true
+                console.log('syncing...')
+                MiddleMan.sync().then(() => {
+                    isSyncing.current = false
+                    console.log('sync complete')
+                })
+            }
+        })
+    }, [navigation])
+
     return (
         <View style={{flex: 1, backgroundColor: 'white',}}>
             <View style={{justifyContent: 'center', alignContent: 'center', paddingHorizontal: 20,}}>

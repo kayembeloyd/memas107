@@ -3,14 +3,17 @@ import { StyleSheet, ScrollView, View, Text } from 'react-native';
 
 import { DateSelectionCalendar } from 'react-native-easy-calendar'
 
+import MiddleMan from '../database/MiddleMan';
+import Department from '../database/models/Department';
+import Equipment from '../database/models/Equipment';
+import TechnicalSpecification from '../database/models/TechnicalSpecification';
+
 import CButton from '../components/CButton';
 import CCard from '../components/CCard';
 import CCustomModal from '../components/CCustomModal';
 import CListModal from '../components/CListModal';
 import CTextInput from '../components/CTextInput';
-import Department from '../database/models/Department';
-import Equipment from '../database/models/Equipment';
-import TechnicalSpecification from '../database/models/TechnicalSpecification';
+
 import DatesHelper from '../helper_classes/DatesHelper';
 
 export default function EquipmentEntryScreen({ navigation }){
@@ -33,6 +36,13 @@ export default function EquipmentEntryScreen({ navigation }){
     useEffect(() => {
         Department.getDepartments({ with_all: false }).then((dpt) => setDepartments(dpt))
     }, [])
+
+    const triggerSync = () => {
+        console.log('syncing...')
+        MiddleMan.sync().then(() => {
+            console.log('sync complete')
+        })
+    }
 
     return (
         <View style={{flex: 1, marginTop: 0, backgroundColor: 'white',}}>
@@ -194,6 +204,7 @@ export default function EquipmentEntryScreen({ navigation }){
                             const eq = new Equipment()
                             eq.data = equipmentData
                             eq.save().then((new_e_id) => {
+                                triggerSync()
                                 alert('Equipment saved ')
                                 setEquipmentData([])
                                 navigation.goBack()

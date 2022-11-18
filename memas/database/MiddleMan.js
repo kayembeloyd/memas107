@@ -2,7 +2,7 @@ import DatesHelper from "../helper_classes/DatesHelper"
 import LocalDatabase from "./LocalDatabase"
 
 export default class MiddleMan {
-    static API_ADDRESS = 'http://192.168.120.58/memas107api'
+    static API_ADDRESS = 'http://192.168.222.58/memas107api'
 
     // Simple equality filter test
     static seft(model_property, filter_property){
