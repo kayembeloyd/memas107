@@ -11,6 +11,8 @@ import MaintenanceLogEntryScreen from '../screens/MaintenanceLogEntryScreen'
 import MaintenanceLogScreen from '../screens/MaintenanceLogScreen'
 import MaintenanceLogsScreen from '../screens/MaintenanceLogsScreen'
 import ScanScreen from '../screens/ScanScreen'
+import MaintenanceScheduleScreen from '../screens/MaintenanceScheduleScreen';
+import SettingsScreen from '../screens/SettingsScreen';
 
 const stack_navigator = createNativeStackNavigator();
 
@@ -93,6 +95,17 @@ export default function MainNavigationStack({ navigation }) {
                 initialParams={{ filtering: 'off', filteringEquipment: null }}/>
             
             <stack_navigator.Screen 
+                name='MaintenanceSchedule'
+                component={ MaintenanceScheduleScreen }
+                options={ ({ navigation }) => {
+                    return {
+                        headerShown: true,
+                        headerShadowVisible: true,
+                        headerTitle: 'Maintenance Schedule',
+                    }
+                }}/>
+
+            <stack_navigator.Screen 
                 name='Scan'
                 component={ ScanScreen }
                 options={ ({ navigation }) => {
@@ -100,6 +113,17 @@ export default function MainNavigationStack({ navigation }) {
                         headerShown: true,
                         headerShadowVisible: true,
                         headerTitle: 'Scan Equipment',
+                    }
+                }}/>
+
+            <stack_navigator.Screen 
+                name='Settings'
+                component={ SettingsScreen }
+                options={ ({ navigation }) => {
+                    return {
+                        headerShown: true,
+                        headerShadowVisible: true,
+                        headerTitle: 'Settings',
                     }
                 }}/>
         </stack_navigator.Navigator>

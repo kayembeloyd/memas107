@@ -7,9 +7,10 @@ import CFilterItem from '../components/CFilterItem';
 import CEquipmentItem from '../components/CEquipmentItem'
 import CScanButton from '../components/CScanButton';
 import CListModal from '../components/CListModal';
+import CButton from '../components/CButton';
+
 import Equipment from '../database/models/Equipment';
 import Department from '../database/models/Department';
-import CButton from '../components/CButton';
 import Status from '../database/models/Status';
 
 export default function EquipmentsScreen({ navigation }){

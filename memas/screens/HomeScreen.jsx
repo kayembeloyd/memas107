@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -33,7 +33,9 @@ export default function HomeScreen({ navigation }){
                     <Text style={{fontSize: 20, fontWeight: '400', fontFamily: 'Roboto', flex: 1,}}>
                         MEMAS107
                     </Text>
-                    <Ionicons name="settings-outline" size={28} color="black" />
+                    <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+                        <Ionicons name="settings-outline" size={28} color="black" />
+                    </TouchableOpacity>
                 </View>
             </View>
 
@@ -55,9 +57,7 @@ export default function HomeScreen({ navigation }){
                         <CButton style={{ marginTop:10 }} text="Maintenance Logs" onPress={() =>navigation.navigate('MaintenanceLogs') }/>
                         
                         <CButton style={{ marginTop:10 }} text="Maintenance Schedule" onPress={() => {
-                            LocalDatabase.clearEverything().then(() => {
-                                console.log('database cleared')
-                            })
+                            navigation.navigate('MaintenanceSchedule')
                         }}/>
                     </CCard>
                 </View>
