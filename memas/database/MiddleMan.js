@@ -171,7 +171,7 @@ export default class MiddleMan {
             var lastIndex = 0
             var greaterDate = '2022-11-06 17:43:21';
             while(thereIsMore){
-                var maintenanceLogResults = await this.getEquipments(lastIndex + 1, 10)
+                var maintenanceLogResults = await this.getMaintenanceLogs(lastIndex + 1, 10)
                 var maintenanceLogs = maintenanceLogResults.data
         
                 maintenanceLogs.forEach(maintenanceLog => {
@@ -194,18 +194,18 @@ export default class MiddleMan {
                     const data = await response.json();
         
                     for (const maintenanceLogData of data) {
-                        var modified_technical_specification_data = {}
+                        var modified_maintenance_log_info_data = {}
         
-                        modified_technical_specification_data.technical_specification = JSON.parse(maintenanceLogData.technical_specification.technical_specification)
-                        modified_technical_specification_data.tss_oid = maintenanceLogData.technical_specification.tss_oid
+                        modified_maintenance_log_info_data.maintenance_log_info = JSON.parse(maintenanceLogData.maintenance_log_info.maintenance_log_info)
+                        modified_maintenance_log_info_data.mli_oid = maintenanceLogData.maintenance_log_info.mli_oid
         
-                        delete maintenanceLogData.e_id
-                        delete maintenanceLogData.technical_specification
+                        delete maintenanceLogData.ml_id
+                        delete maintenanceLogData.maintenance_log_info
         
-                        const tss_id = await this.saveTechnicalSpecification(modified_technical_specification_data)
-                        maintenanceLogData.technical_specification_id = tss_id
+                        const mli_id = await this.saveMaintenanceLogInfo(modified_maintenance_log_info_data)
+                        maintenanceLogData.maintenance_log_info_id = mli_id
         
-                        await this.saveEquipment(maintenanceLogData)
+                        await this.saveMaintenanceLog(maintenanceLogData)
                     }
                     
                     thereIsMore = data.length > 0
@@ -216,6 +216,7 @@ export default class MiddleMan {
                     thereIsMore = false
                 }
             } 
+
         
         
         
@@ -223,23 +224,23 @@ export default class MiddleMan {
             var maintenanceLogsToUpload = [];
             thereIsMore = true
             lastIndex = 0
-            const upload = async (eqsToUpload) => {
+            const upload = async (mlsToUpload) => {
                 try {
-                    for (const eq of eqsToUpload) {
-                        const technicalSpecificationData = await this.getTechnicalSpecification(eq.data.technical_specification_id);
-                        eq.data.technical_specification = JSON.stringify(technicalSpecificationData.technical_specification)
+                    for (const ml of mlsToUpload) {
+                        const maintenanceLogInfoData = await this.getMaintenanceLogInfo(ml.data.maintenance_log_info_id);
+                        ml.data.maintenance_log_info = JSON.stringify(maintenanceLogInfoData.maintenance_log_info)
         
                         const response = await fetch(this.API_ADDRESS + '/maintenance-logs', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
                             },
-                            body: new URLSearchParams(eq.data).toString()
+                            body: new URLSearchParams(ml.data).toString()
                         })
         
                         const data = await response.json();
                         
-                        await this.saveEquipment(data);
+                        await this.saveMaintenanceLog(data);
                     }
                 } catch (error) {
                     console.error(error)
@@ -247,11 +248,11 @@ export default class MiddleMan {
             }
         
             while(thereIsMore){
-                var maintenanceLogResults = await this.getEquipments(lastIndex + 1, 10)
+                var maintenanceLogResults = await this.getMaintenanceLogs(lastIndex + 1, 10)
                 var maintenanceLogs = maintenanceLogResults.data
         
                 for (const maintenanceLog of maintenanceLogs) {
-                    if (maintenanceLog.data.e_oid === 0){
+                    if (maintenanceLog.data.ml_oid === 0){
                         maintenanceLogsToUpload.push(maintenanceLog);
         
                         if (maintenanceLogsToUpload.length >= 10){
@@ -273,7 +274,7 @@ export default class MiddleMan {
             thereIsMore = true
             lastIndex = 0
             while(thereIsMore){
-                var maintenanceLogResults = await this.getEquipments(lastIndex + 1, 10)
+                var maintenanceLogResults = await this.getMaintenanceLogs(lastIndex + 1, 10)
                 var maintenanceLogs = maintenanceLogResults.data
                 var maintenanceLogsData = []
         
@@ -289,8 +290,10 @@ export default class MiddleMan {
                     })
         
                     const data = await response.json();
-        
-                    for (const maintenanceLogData of data) await this.saveEquipment(maintenanceLogData)                    
+
+                    // console.log('data: ', data)
+
+                    for (const maintenanceLogData of data) await this.saveMaintenanceLog(maintenanceLogData)                    
                     
                 } catch (error) {
                     console.error(error)

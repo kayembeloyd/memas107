@@ -111,6 +111,7 @@ export default function MaintenanceLogEntryScreen({ route, navigation }){
                             
                             mli.data.maintenance_log_info = maintenanceInfo
                             mli.save().then((new_mli_id) => {
+                                maintenanceData.ml_oid = 0
                                 maintenanceData.maintenance_log_info_id = new_mli_id
                                 maintenanceData.created_at = DatesHelper.getSQLCompatibleDate(new Date())
                                 maintenanceData.date = DatesHelper.getSQLCompatibleDate(new Date()) 
