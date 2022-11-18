@@ -2,7 +2,7 @@ import DatesHelper from "../helper_classes/DatesHelper"
 import LocalDatabase from "./LocalDatabase"
 
 export default class MiddleMan {
-    static API_ADDRESS = 'http://192.168.45.58/memas107api'
+    static API_ADDRESS = 'http://192.168.120.58/memas107api'
 
     // Simple equality filter test
     static seft(model_property, filter_property){
@@ -165,7 +165,140 @@ export default class MiddleMan {
         }
 
         const maintenanceLogsSync = async () => {
-
+            
+            // Get largest uploaded_at date
+            var thereIsMore = true
+            var lastIndex = 0
+            var greaterDate = '2022-11-06 17:43:21';
+            while(thereIsMore){
+                var maintenanceLogResults = await this.getEquipments(lastIndex + 1, 10)
+                var maintenanceLogs = maintenanceLogResults.data
+        
+                maintenanceLogs.forEach(maintenanceLog => {
+                    greaterDate = DatesHelper.greaterDate(maintenanceLog.data.uploaded_at, greaterDate)
+                });
+        
+                thereIsMore = maintenanceLogResults.meta.more
+                lastIndex = maintenanceLogResults.meta.lastIndex
+            }
+        
+            // Fetch the maintenanceLogs
+            thereIsMore = true
+            var page = 1
+            while(thereIsMore){
+                try{
+                    const response = await fetch(
+                        this.API_ADDRESS + '/maintenance-logs?number_of_maintenance_logs=' + 10 + '&page=' + page + '&uploaded_at=' + greaterDate
+                    );
+            
+                    const data = await response.json();
+        
+                    for (const maintenanceLogData of data) {
+                        var modified_technical_specification_data = {}
+        
+                        modified_technical_specification_data.technical_specification = JSON.parse(maintenanceLogData.technical_specification.technical_specification)
+                        modified_technical_specification_data.tss_oid = maintenanceLogData.technical_specification.tss_oid
+        
+                        delete maintenanceLogData.e_id
+                        delete maintenanceLogData.technical_specification
+        
+                        const tss_id = await this.saveTechnicalSpecification(modified_technical_specification_data)
+                        maintenanceLogData.technical_specification_id = tss_id
+        
+                        await this.saveEquipment(maintenanceLogData)
+                    }
+                    
+                    thereIsMore = data.length > 0
+                    page++ 
+        
+                } catch (error){
+                    console.error(error);
+                    thereIsMore = false
+                }
+            } 
+        
+        
+        
+            // Upload maintenanceLogs
+            var maintenanceLogsToUpload = [];
+            thereIsMore = true
+            lastIndex = 0
+            const upload = async (eqsToUpload) => {
+                try {
+                    for (const eq of eqsToUpload) {
+                        const technicalSpecificationData = await this.getTechnicalSpecification(eq.data.technical_specification_id);
+                        eq.data.technical_specification = JSON.stringify(technicalSpecificationData.technical_specification)
+        
+                        const response = await fetch(this.API_ADDRESS + '/maintenance-logs', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                            },
+                            body: new URLSearchParams(eq.data).toString()
+                        })
+        
+                        const data = await response.json();
+                        
+                        await this.saveEquipment(data);
+                    }
+                } catch (error) {
+                    console.error(error)
+                }    
+            }
+        
+            while(thereIsMore){
+                var maintenanceLogResults = await this.getEquipments(lastIndex + 1, 10)
+                var maintenanceLogs = maintenanceLogResults.data
+        
+                for (const maintenanceLog of maintenanceLogs) {
+                    if (maintenanceLog.data.e_oid === 0){
+                        maintenanceLogsToUpload.push(maintenanceLog);
+        
+                        if (maintenanceLogsToUpload.length >= 10){
+                            await upload(maintenanceLogsToUpload)
+                            maintenanceLogsToUpload = []
+                        }
+                    }    
+                }
+        
+                thereIsMore = maintenanceLogResults.meta.more
+                lastIndex = maintenanceLogResults.meta.lastIndex
+            }
+        
+            if (maintenanceLogsToUpload.length > 0) await upload(maintenanceLogsToUpload)
+        
+            
+        
+            // Update maintenanceLogs
+            thereIsMore = true
+            lastIndex = 0
+            while(thereIsMore){
+                var maintenanceLogResults = await this.getEquipments(lastIndex + 1, 10)
+                var maintenanceLogs = maintenanceLogResults.data
+                var maintenanceLogsData = []
+        
+                maintenanceLogs.forEach( maintenanceLog => maintenanceLogsData.push(maintenanceLog.data) );
+        
+                try {
+                    const response = await fetch(this.API_ADDRESS + '/maintenance-logs/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                        },
+                        body: new URLSearchParams({ 'maintenance_logs' : JSON.stringify(maintenanceLogsData) }).toString()
+                    })
+        
+                    const data = await response.json();
+        
+                    for (const maintenanceLogData of data) await this.saveEquipment(maintenanceLogData)                    
+                    
+                } catch (error) {
+                    console.error(error)
+                }
+        
+                thereIsMore = maintenanceLogResults.meta.more
+                lastIndex = maintenanceLogResults.meta.lastIndex
+            }
         }
         
         await equipmentSync()
