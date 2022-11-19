@@ -17,12 +17,11 @@ export default function CMaintenanceScheduleItem(props) {
         <View style={[styles.container, {...props.style}]}>
             <View style={{ height:1, backgroundColor:'#E2E2E2'}} ></View>
             <View style={{ flexDirection:'row'}}>
-                <View style={{}}>
+                <View style={{ marginTop: 5, marginRight: 15,}}>
                     <Text>19</Text>
                     <Text>Nov</Text>
                     <Text>2022</Text>
                 </View>
-
 
                 <View style={{ flex:1}}>
                     <FlatList
