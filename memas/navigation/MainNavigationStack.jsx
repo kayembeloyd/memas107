@@ -99,9 +99,8 @@ export default function MainNavigationStack({ navigation }) {
                 component={ MaintenanceScheduleScreen }
                 options={ ({ navigation }) => {
                     return {
-                        headerShown: true,
-                        headerShadowVisible: true,
-                        headerTitle: 'Maintenance Schedule',
+                        headerShown: false,
+                        headerShadowVisible: false,
                     }
                 }}/>
 
