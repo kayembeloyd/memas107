@@ -4,6 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import MainNavigationStack from './memas/navigation/MainNavigationStack';
 
+/* Ready for Testing PHASE 1 20-November-2022 */
+
 export default function App() {
   return (
     <SafeAreaView style={{ flex: 1}}>

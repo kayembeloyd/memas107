@@ -34,7 +34,7 @@ export default function CMaintenanceScheduleItem(props) {
                         data={maintenaceScheduleTaskItems}
                         keyExtractor={(item) => item.equipment_id}
                         renderItem={({ item }) => (
-                            <CMaintenanceScheduleTask item={item}/>
+                            <CMaintenanceScheduleTask item={item} onTaskItemPress={props.onTaskItemPress}/>
                         )}
                     />
                 </View>

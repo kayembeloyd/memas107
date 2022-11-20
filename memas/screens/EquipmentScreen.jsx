@@ -36,6 +36,8 @@ export default function EquipmentScreen({ route, navigation }){
     }, [ statuses ])
 
     useEffect(() => {
+
+        console.log('item:', item)
         Status.getStatuses({with_all: false}).then((sts) => setStatuses(sts))
 
         const technical_specification = new TechnicalSpecification()

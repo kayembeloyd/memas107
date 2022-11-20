@@ -7,6 +7,7 @@ import CListModal from '../components/CListModal';
 import CMaintenanceScheduleItem from '../components/CMaintenanceScheduleItem';
 import CSearchBar from '../components/CSearchBar';
 import Department from '../database/models/Department';
+import Equipment from '../database/models/Equipment';
 import MaintenanceScheduleItem from '../database/models/MaintenanceScheduleItem';
 
 export default function MaintenanceScheduleScreen({ navigation }) {
@@ -51,11 +52,8 @@ export default function MaintenanceScheduleScreen({ navigation }) {
         if (iMore.current){
             iIsLoading.current = true
             
-            MaintenanceScheduleItem.getMaintenanceScheduleItems(iLastIndex.current + 1, 5).then((results) => {
+            MaintenanceScheduleItem.getMaintenanceScheduleItems(iLastIndex.current + 1, 10).then((results) => {
                 iIsLoading.current = false
-                
-                console.log('results', results)
-
                 results.meta.lastIndex ? iLastIndex.current = results.meta.lastIndex : iLastIndex.current = 0
                 iMore.current = results.meta.more
 
@@ -75,6 +73,12 @@ export default function MaintenanceScheduleScreen({ navigation }) {
     // navigation focus
     useEffect(() => {
         return navigation.addListener('focus', () => { 
+                
+            // Resetting the loadMaintenanceScheduleItems() refs
+            iIsLoading.current = false
+            iMore.current = true
+            iLastIndex.current = 0
+
             setMaintenanceScheduleItems(e => [])
             loadMaintenanceScheduleItems()
         });
@@ -149,7 +153,14 @@ export default function MaintenanceScheduleScreen({ navigation }) {
                 data={maintenaceScheduleItems}
                 keyExtractor={(item) => item.data.msi_id}
                 renderItem={({ item }) => (
-                    <CMaintenanceScheduleItem item={item} style={{width:'90%'}}/>
+                    <CMaintenanceScheduleItem item={item} style={{width:'90%'}} onTaskItemPress={(item_e_id) => {
+                        const item = new Equipment()
+                        item.load(item_e_id).then(() => {
+                            if (item.data){
+                                navigation.navigate('Equipment', { item })
+                            }
+                        })
+                    }}/>
                 )}
             />
         </View>

@@ -8,7 +8,7 @@ export default function CMaintenanceScheduleTask(props) {
     }, [])
 
     return (
-        <TouchableOpacity style={[{...props.style}]}>
+        <TouchableOpacity style={[{...props.style}]} onPress={() => props.onTaskItemPress(props.item.equipment_id)}>
             <View style={[styles.container]}>
                 <Text>{props.item.equipment_name} ({props.item.equipment_asset_tag})</Text>
                 <Text style={{fontSize:12,}}>Preventive maintenance</Text>
