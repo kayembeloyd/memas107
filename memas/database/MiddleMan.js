@@ -671,15 +671,16 @@ export default class MiddleMan {
 
                 var c = msi_id
                 for (let j = index; j <= lastMsi_idx; j++) {
-                    var cn = await LocalDatabase.getItem('msi_idx' + (j + 1))
+                    var ji = j + 1
+                    var cn = await LocalDatabase.getItem('msi_idx' + `${ji}`)
                     if (c)
-                        await LocalDatabase.setItem('msi_idx' + (j + 1), c)
+                        await LocalDatabase.setItem('msi_idx' + `${ji}`, `${c}`)
                     c = cn
                     newLastMsi_idx = (j + 1)
                 }
 
-                await LocalDatabase.setItem('lastMsi_idx', newLastMsi_idx)
-                await LocalDatabase.setItem('msi_idx' + position_i, newp)
+                await LocalDatabase.setItem('lastMsi_idx', `${newLastMsi_idx}`)
+                await LocalDatabase.setItem('msi_idx' + `${position_i}`, `${newp}`)
                 
                 hasAdded = true
                 break
@@ -687,8 +688,8 @@ export default class MiddleMan {
         }
 
         if (!hasAdded){
-            await LocalDatabase.setItem('msi_idx' + lastMsi_idx, maintenanceScheduleItemData.msi_id)
-            await LocalDatabase.setItem('lastMsi_idx', lastMsi_idx)
+            await LocalDatabase.setItem('msi_idx' + lastMsi_idx, `${maintenanceScheduleItemData.msi_id}`)
+            await LocalDatabase.setItem('lastMsi_idx',  `${lastMsi_idx}`)
         } else {
             return newLastMsi_idx
         }
