@@ -2,7 +2,7 @@ import DatesHelper from "../helper_classes/DatesHelper"
 import LocalDatabase from "./LocalDatabase"
 
 export default class MiddleMan {
-    static API_ADDRESS = 'http://192.168.222.58/memas107api'
+    static API_ADDRESS = 'http://192.168.162.58/memas107api'
 
     // Simple equality filter test
     static seft(model_property, filter_property){
@@ -140,7 +140,9 @@ export default class MiddleMan {
                 var equipments = equipmentResults.data
                 var equipmentsData = []
 
-                equipments.forEach( equipment => equipmentsData.push(equipment.data) );
+                equipments.forEach( (equipment) => {
+                    equipmentsData.push(equipment.data)
+                });
 
                 try {
                     const response = await fetch(this.API_ADDRESS + '/equipments/update', {
@@ -303,10 +305,61 @@ export default class MiddleMan {
                 lastIndex = maintenanceLogResults.meta.lastIndex
             }
         }
+
+        const maintenanceScheduleSync = async () => {
+
+            var thereIsMore = true
+            var lastIndex = 0
+            while(thereIsMore){
+                var equipmentResults = await this.getEquipments(lastIndex + 1, 10)
+                var equipments = equipmentResults.data
+
+                for (const item of equipments) {
+                    var nextServiceDate = item.data.next_service_date
+                    if (nextServiceDate) {
+                        nextServiceDate = nextServiceDate.substring(0,10)
+                        
+                        var msiData = await this.getMaintenanceScheduleItem(nextServiceDate)
+
+                        if (msiData && msiData.msts){
+                            var canPush = true
+                            for (const mst of msiData.msts) {
+                                if (mst.equipment_id === item.data.e_id){
+                                    canPush = false
+                                    break
+                                } 
+                            }
+
+                            if (canPush){
+                                msiData.msts.push({
+                                    equipment_id: item.data.e_id,
+                                    equipment_e_oid: item.data.e_oid,
+                                })
+                            }
+                        } else {
+                            msiData = {}
+                            msiData.msi_id = nextServiceDate
+                            msiData.msts = [{
+                                equipment_id: item.data.e_id,
+                                equipment_e_oid: item.data.e_oid,
+                            }]
+                        }
+
+                        await this.saveMaintenanceScheduleItem(msiData)  
+                        await this.saveMaintenanceScheduleItemIndex(msiData) 
+                    }
+                }
+
+                thereIsMore = equipmentResults.meta.more
+                lastIndex = equipmentResults.meta.lastIndex
+            }
+        }
         
         await equipmentSync()
 
         await maintenanceLogsSync()
+
+        await maintenanceScheduleSync()
     }
 
     // LOCAL
@@ -567,7 +620,127 @@ export default class MiddleMan {
         return newMLIID
     }
 
-    // For Depatment
+    // For MaintenanceScheduleItem
+    static async getMaintenanceScheduleItem(msi_id){
+        if (msi_id){
+            return JSON.parse(
+                await LocalDatabase.getItem('msi_id' + msi_id)
+            )
+        }
+    }
+
+    static async saveMaintenanceScheduleItem(maintenanceScheduleItemData){
+        if (maintenanceScheduleItemData.msi_id){
+            await LocalDatabase.setItem('msi_id' + maintenanceScheduleItemData.msi_id, `${JSON.stringify(maintenanceScheduleItemData)}`)
+            return maintenanceScheduleItemData.msi_id
+        }
+
+        return undefined
+    }
+
+    static async deleteMaintenanceScheduleItem(msi_id){
+        await LocalDatabase.deleteItem('msi_id' + msi_id)
+    }
+
+    static async saveMaintenanceScheduleItemIndex(maintenanceScheduleItemData){
+        let lastMsi_idx = await LocalDatabase.getItem('lastMsi_idx')
+        lastMsi_idx ? 0 : lastMsi_idx = 0
+
+        var hasAdded = false
+        lastMsi_idx = Number.parseInt(lastMsi_idx) + 1
+        var newLastMsi_idx = 0
+
+        for (let index = 0; index <= lastMsi_idx; index++) {
+            const msi_id = await LocalDatabase.getItem('msi_idx' + index)
+            const input_date = maintenanceScheduleItemData.msi_id
+
+            if (DatesHelper.isEqualToDate(msi_id, input_date)){
+                hasAdded = true
+                break
+            }
+
+            if (DatesHelper.isGreaterThanDate(msi_id, input_date)){
+                const newp = input_date
+                const position_i = index
+
+                var c = msi_id
+                for (let j = index; j <= lastMsi_idx; j++) {
+                    var ji = (j + 1)
+                    var cn = await LocalDatabase.getItem('msi_idx' + (j + 1))
+                    if (c)
+                        await LocalDatabase.setItem('msi_idx' + (j + 1), c)
+                    c = cn
+                    newLastMsi_idx = (j + 1)
+                }
+
+                await LocalDatabase.setItem('lastMsi_idx', newLastMsi_idx)
+                await LocalDatabase.setItem('msi_idx' + position_i, newp)
+                
+                hasAdded = true
+                break
+            }
+        }
+
+        if (!hasAdded){
+            await LocalDatabase.setItem('msi_idx' + lastMsi_idx, maintenanceScheduleItemData.msi_id)
+            await LocalDatabase.setItem('lastMsi_idx', lastMsi_idx)
+        } else {
+            return newLastMsi_idx
+        }
+        
+        return lastMsi_idx
+    }
+
+    static async getMaintenanceScheduleItemIndex(msi_idx){
+        if (msi_idx){
+            return JSON.parse(
+                await LocalDatabase.getItem('msi_idx' + msi_idx)
+            )
+        }
+    }
+
+    static async getMaintenanceScheduleItems(lastIndex, size){
+        let iStart = lastIndex
+        let iSize = size
+
+        let maintenanceScheduleItems = []
+        let iCount = 1
+        let iMore = true
+
+        let lastNewIndex = lastIndex
+        let lastMSIIDX = await LocalDatabase.getItem('lastMsi_idx')
+        lastMSIIDX ? 0 : lastMSIIDX = 0
+        lastMSIIDX = Number.parseInt(lastMSIIDX)
+        
+        while (iCount < iSize) {
+            var msi_idx = await this.getMaintenanceScheduleItemIndex(iStart)
+            
+            if (msi_idx){
+                const msi = {}
+                msi.data = await this.getMaintenanceScheduleItem(msi_idx)
+                maintenanceScheduleItems.push(msi)
+                lastNewIndex = iStart
+                iCount++
+            }
+
+            iStart++
+
+            if (iStart > lastMSIIDX) {
+                iMore = false
+                iCount = iSize + 1
+            }
+        }
+
+        return {
+            data: maintenanceScheduleItems, 
+            meta: {
+                lastIndex: lastNewIndex,
+                more: iMore
+            }
+        }
+    }
+
+    // For Department
     static async getDepartments(options){
         if (options.with_all) {
             return ([

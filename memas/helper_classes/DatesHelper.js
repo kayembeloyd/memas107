@@ -20,4 +20,12 @@ export default class DatesHelper {
     static greaterDate(date_one, date_two){
         return (new Date(date_one).getTime() >= new Date(date_two).getTime() ? date_one : date_two)
     }
+
+    static isGreaterThanDate(date_one, date_two) {
+        return new Date(date_one).getTime() > new Date(date_two).getTime()
+    }
+
+    static isEqualToDate(date_one, date_two) {
+        return new Date(date_one).getTime() === new Date(date_two).getTime()
+    }
 }

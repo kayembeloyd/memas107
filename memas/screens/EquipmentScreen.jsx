@@ -3,14 +3,15 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 
 import { DateSelectionCalendar } from 'react-native-easy-calendar'
 
-import TechnicalSpecification from '../database/models/TechnicalSpecification';
-
 import CCard from '../components/CCard';
 import CButton from '../components/CButton';
 import CCustomModal from '../components/CCustomModal';
+
+import TechnicalSpecification from '../database/models/TechnicalSpecification';
 import Equipment from '../database/models/Equipment';
 import DatesHelper from '../helper_classes/DatesHelper';
 import Status from '../database/models/Status';
+import MaintenanceScheduleItem from '../database/models/MaintenanceScheduleItem';
 
 
 export default function EquipmentScreen({ route, navigation }){
@@ -108,9 +109,68 @@ export default function EquipmentScreen({ route, navigation }){
 
                             <CButton style={{ marginRight: 10, marginBottom: 10}} text='Save' 
                                 onPress={() => {
+                                    // Save MaintenanceScheduleItem 
+
                                     if (item.data.next_service_date !== selectedNextServiceDate){
                                         item.data.updated_at = DatesHelper.getSQLCompatibleDate(new Date())
                                         item.data.update_status = 'pending'
+
+                                        var lastNextServiceDate = item.data.next_service_date
+                                        var tMsi = new MaintenanceScheduleItem();
+                                        if (lastNextServiceDate){
+                                            lastNextServiceDate = lastNextServiceDate.substring(0, 10)
+
+                                            console.log('lastNextServiceDate', lastNextServiceDate)
+
+                                            tMsi.load(lastNextServiceDate).then(() => {
+                                                if (tMsi.data && tMsi.data.msts ){
+                                                    var modifiedMsts = []
+
+                                                    for (const mst of tMsi.data.msts) {
+                                                        if (mst.equipment_id !== item.data.e_id) {
+                                                            modifiedMsts.push(mst)
+                                                        }
+                                                    }
+
+                                                    tMsi.data.msts = modifiedMsts
+                                                    
+                                                    if (tMsi.data.msts.length === 0) tMsi.delete().then(() => saveNewMsi())
+                                                    else tMsi.save().then(() => saveNewMsi())
+                                                    
+                                                } else saveNewMsi()
+                                            })
+
+                                            const saveNewMsi = () => {
+                                                var msi = new MaintenanceScheduleItem();
+                                                msi.load(selectedNextServiceDate).then(() => {
+                                                    if (msi.data && msi.data.msts) {
+                                                        var canPush = true
+                                                        for (const mst of msi.data.msts) {
+                                                            if (mst.equipment_id === item.data.e_id){
+                                                                canPush = false
+                                                                break
+                                                            } 
+                                                        }
+
+                                                        if (canPush){
+                                                            msi.data.msts.push({
+                                                                equipment_id: item.data.e_id,
+                                                                equipment_e_oid: item.data.e_oid,
+                                                            })
+                                                        }
+                                                    } else {
+                                                        msi.data = {}
+                                                        msi.data.msi_id = selectedNextServiceDate
+                                                        msi.data.msts = [{
+                                                            equipment_id: item.data.e_id,
+                                                            equipment_e_oid: item.data.e_oid,
+                                                        }]
+                                                    }
+
+                                                    msi.save()    
+                                                }) 
+                                            }
+                                        }
                                     }                                        
                                     
                                     item.data.next_service_date = selectedNextServiceDate

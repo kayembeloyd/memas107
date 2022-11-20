@@ -63,4 +63,25 @@ export default class LocalDatabase {
                 break;
         }
     }
+
+    static async deleteItem(dkey){
+        switch (Platform.OS) {
+            case 'ios':
+            case 'windows':
+            case 'macos':
+            case 'android':
+                Storage.removeItem({ key: `${dkey}` })
+                return 
+            case 'web':
+                try {
+                    await AsyncStorage.removeItem(dkey)
+                } catch (e) {
+                    return
+                }
+
+                return
+            default:
+                break;
+        }
+    }
 }
