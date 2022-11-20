@@ -120,8 +120,6 @@ export default function EquipmentScreen({ route, navigation }){
                                         if (lastNextServiceDate){
                                             lastNextServiceDate = lastNextServiceDate.substring(0, 10)
 
-                                            console.log('lastNextServiceDate', lastNextServiceDate)
-
                                             tMsi.load(lastNextServiceDate).then(() => {
                                                 if (tMsi.data && tMsi.data.msts ){
                                                     var modifiedMsts = []
@@ -156,6 +154,9 @@ export default function EquipmentScreen({ route, navigation }){
                                                             msi.data.msts.push({
                                                                 equipment_id: item.data.e_id,
                                                                 equipment_e_oid: item.data.e_oid,
+                                                                equipment_name: item.data.name,
+                                                                equipment_department: item.data.department,
+                                                                equipment_asset_tag: item.data.asset_tag,
                                                             })
                                                         }
                                                     } else {
@@ -164,6 +165,9 @@ export default function EquipmentScreen({ route, navigation }){
                                                         msi.data.msts = [{
                                                             equipment_id: item.data.e_id,
                                                             equipment_e_oid: item.data.e_oid,
+                                                            equipment_name: item.data.name,
+                                                            equipment_department: item.data.department,
+                                                            equipment_asset_tag: item.data.asset_tag,
                                                         }]
                                                     }
 

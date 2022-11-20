@@ -1,22 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { StyleSheet, Text, View, FlatList } from 'react-native';
+import CButton from '../components/CButton';
 import CFilterBar from '../components/CFilterBar';
 import CFilterItem from '../components/CFilterItem';
 import CListModal from '../components/CListModal';
 import CMaintenanceScheduleItem from '../components/CMaintenanceScheduleItem';
 import CSearchBar from '../components/CSearchBar';
 import Department from '../database/models/Department';
+import MaintenanceScheduleItem from '../database/models/MaintenanceScheduleItem';
 
 export default function MaintenanceScheduleScreen({ navigation }) {
     const [maintenanceScheduleItemsFilterOptions, setMaintenanceScheduleItemsFilterOptions] = useState({})
 
-    const [maintenaceScheduleItems, setMaintenanceScheduleItems] = useState([
-        {data:{equipment_id:1}},
-        {data:{equipment_id:2}},
-        {data:{equipment_id:3}},
-        {data:{equipment_id:4}},
-        {data:{equipment_id:5}},
-    ])
+    const [maintenaceScheduleItems, setMaintenanceScheduleItems] = useState([])
 
     // For the search 
     const searchTerm = useRef('')
@@ -48,11 +44,41 @@ export default function MaintenanceScheduleScreen({ navigation }) {
         }
     } 
 
+    const iIsLoading = useRef(false)
+    const iMore = useRef(true)
+    const iLastIndex = useRef(0)    
+    const loadMaintenanceScheduleItems = () => {
+        if (iMore.current){
+            iIsLoading.current = true
+            
+            MaintenanceScheduleItem.getMaintenanceScheduleItems(iLastIndex.current + 1, 5).then((results) => {
+                iIsLoading.current = false
+                
+                console.log('results', results)
+
+                results.meta.lastIndex ? iLastIndex.current = results.meta.lastIndex : iLastIndex.current = 0
+                iMore.current = results.meta.more
+
+                setMaintenanceScheduleItems((msi) => [...msi, ...results.data])
+            })
+        } else {
+            iIsLoading.current = false
+        }
+    }
+
     const isFirstRun = useRef(true)
     // Run once hook
     useEffect(() => {
         Department.getDepartments({with_all: true}).then((dpt) => setDepartments(dpt))
     }, []);
+
+    // navigation focus
+    useEffect(() => {
+        return navigation.addListener('focus', () => { 
+            setMaintenanceScheduleItems(e => [])
+            loadMaintenanceScheduleItems()
+        });
+    }, [navigation])
 
     return (
         <View style={styles.container}>
@@ -102,12 +128,28 @@ export default function MaintenanceScheduleScreen({ navigation }) {
                         </View>
                     )
                 }}
+                ListFooterComponent={() => {
+                    return (
+                        <View style={{ margin: 10, alignItems: 'center'}}>
+                            {
+                                iMore.current ? (
+                                    <CButton style={{ width: '100%', maxWidth: 700 }} text="Load More" 
+                                        onPress={() => loadMaintenanceScheduleItems() }/> 
+                                    ) : (
+                                    iIsLoading.current ? <CButton style={{ width: '100%', maxWidth: 700 }} text="Loading..."/> : (
+                                        <Text> No More schedules </Text>
+                                    )
+                                )
+                            }
+                        </View>
+                    )
+                }}
                 stickyHeaderIndices={[0]}
                 stickyHeaderHiddenOnScroll={true}
                 data={maintenaceScheduleItems}
-                keyExtractor={(item) => item.data.equipment_id}
+                keyExtractor={(item) => item.data.msi_id}
                 renderItem={({ item }) => (
-                    <CMaintenanceScheduleItem style={{width:'90%'}}/>
+                    <CMaintenanceScheduleItem item={item} style={{width:'90%'}}/>
                 )}
             />
         </View>

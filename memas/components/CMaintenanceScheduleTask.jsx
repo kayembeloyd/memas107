@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
 export default function CMaintenanceScheduleTask(props) {
+
+    useEffect(() => {
+        
+    }, [])
+
     return (
         <TouchableOpacity style={[{...props.style}]}>
             <View style={[styles.container]}>
-                <Text>Oxygen Concentrator (M001-001)</Text>
+                <Text>{props.item.equipment_name} ({props.item.equipment_asset_tag})</Text>
                 <Text style={{fontSize:12,}}>Preventive maintenance</Text>
-                <Text style={{fontSize:12,}}>Labour ward</Text>
+                <Text style={{fontSize:12,}}>{props.item.equipment_department}</Text>
             </View>
         </TouchableOpacity>
         

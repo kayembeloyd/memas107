@@ -18,7 +18,7 @@ export default class MaintenanceScheduleItem {
         await MiddleMan.deleteMaintenanceScheduleItem(this.data.msi_id)
     }
 
-    /*static async getMaintenanceScheduleItems(lastDate, size, maintenanceScheduleItemsFilterOptions){
-        return await MiddleMan.getMaintenanceScheduleItems(lastDate, size, maintenanceScheduleItemsFilterOptions)
-    }*/
+    static async getMaintenanceScheduleItems(lastIndex, size, maintenanceScheduleItemsFilterOptions){
+        return await MiddleMan.getMaintenanceScheduleItems(lastIndex, size, maintenanceScheduleItemsFilterOptions)
+    }
 }

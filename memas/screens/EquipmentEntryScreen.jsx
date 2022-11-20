@@ -37,13 +37,6 @@ export default function EquipmentEntryScreen({ navigation }){
         Department.getDepartments({ with_all: false }).then((dpt) => setDepartments(dpt))
     }, [])
 
-    const triggerSync = () => {
-        console.log('syncing...')
-        MiddleMan.sync().then(() => {
-            console.log('sync complete')
-        })
-    }
-
     return (
         <View style={{flex: 1, marginTop: 0, backgroundColor: 'white',}}>
             <CListModal visible={selectDepartmentModalVisibility} title='Select department' list={departments} 
@@ -204,7 +197,6 @@ export default function EquipmentEntryScreen({ navigation }){
                             const eq = new Equipment()
                             eq.data = equipmentData
                             eq.save().then((new_e_id) => {
-                                triggerSync()
                                 alert('Equipment saved ')
                                 setEquipmentData([])
                                 navigation.goBack()

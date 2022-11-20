@@ -1,26 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, FlatList } from "react-native";
 
 import CMaintenanceScheduleTask from "./CMaintenanceScheduleTask";
 
 export default function CMaintenanceScheduleItem(props) {
 
-    const [maintenaceScheduleTaskItems, setMaintenaceScheduleTaskItems] = useState([
-        {id:1},
-        {id:2},
-        {id:3},
-        {id:4},
-        {id:5},
-    ])
+    const [maintenaceScheduleTaskItems, setMaintenaceScheduleTaskItems] = useState([])
+
+    const [taskDate, setTaskDate] = useState(new Date())
+    
+    useEffect(() => {
+        setMaintenaceScheduleTaskItems((msts) => [...msts, ...props.item.data.msts])
+        setTaskDate(new Date(props.item.data.msi_id))
+    }, [])
 
     return (
         <View style={[styles.container, {...props.style}]}>
             <View style={{ height:1, backgroundColor:'#E2E2E2'}} ></View>
             <View style={{ flexDirection:'row'}}>
                 <View style={{ marginTop: 5, marginRight: 15,}}>
-                    <Text>19</Text>
-                    <Text>Nov</Text>
-                    <Text>2022</Text>
+                    <Text>{taskDate.getDate()}</Text>
+                    <Text>{taskDate.toLocaleString('default', { month: 'short' })}</Text>
+                    <Text>{taskDate.getFullYear()}</Text>
                 </View>
 
                 <View style={{ flex:1}}>
@@ -31,9 +32,9 @@ export default function CMaintenanceScheduleItem(props) {
                             </View>
                         )}
                         data={maintenaceScheduleTaskItems}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.equipment_id}
                         renderItem={({ item }) => (
-                            <CMaintenanceScheduleTask />
+                            <CMaintenanceScheduleTask item={item}/>
                         )}
                     />
                 </View>

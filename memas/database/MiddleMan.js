@@ -334,6 +334,9 @@ export default class MiddleMan {
                                 msiData.msts.push({
                                     equipment_id: item.data.e_id,
                                     equipment_e_oid: item.data.e_oid,
+                                    equipment_name: item.data.name,
+                                    equipment_department: item.data.department,
+                                    equipment_asset_tag: item.data.asset_tag,
                                 })
                             }
                         } else {
@@ -342,6 +345,9 @@ export default class MiddleMan {
                             msiData.msts = [{
                                 equipment_id: item.data.e_id,
                                 equipment_e_oid: item.data.e_oid,
+                                equipment_name: item.data.name,
+                                equipment_department: item.data.department,
+                                equipment_asset_tag: item.data.asset_tag,
                             }]
                         }
 
@@ -665,7 +671,6 @@ export default class MiddleMan {
 
                 var c = msi_id
                 for (let j = index; j <= lastMsi_idx; j++) {
-                    var ji = (j + 1)
                     var cn = await LocalDatabase.getItem('msi_idx' + (j + 1))
                     if (c)
                         await LocalDatabase.setItem('msi_idx' + (j + 1), c)
@@ -692,14 +697,11 @@ export default class MiddleMan {
     }
 
     static async getMaintenanceScheduleItemIndex(msi_idx){
-        if (msi_idx){
-            return JSON.parse(
-                await LocalDatabase.getItem('msi_idx' + msi_idx)
-            )
-        }
+        if (msi_idx) return await LocalDatabase.getItem('msi_idx' + msi_idx)
+        return
     }
 
-    static async getMaintenanceScheduleItems(lastIndex, size){
+    static async getMaintenanceScheduleItems(lastIndex, size, maintenanceScheduleItemsFilterOptions){
         let iStart = lastIndex
         let iSize = size
 
@@ -718,9 +720,11 @@ export default class MiddleMan {
             if (msi_idx){
                 const msi = {}
                 msi.data = await this.getMaintenanceScheduleItem(msi_idx)
-                maintenanceScheduleItems.push(msi)
-                lastNewIndex = iStart
-                iCount++
+                if (msi.data){
+                    maintenanceScheduleItems.push(msi)
+                    lastNewIndex = iStart
+                    iCount++
+                }
             }
 
             iStart++
